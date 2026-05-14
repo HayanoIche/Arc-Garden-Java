@@ -13,6 +13,8 @@ public class Jardim
     private int tema;
     private LocalDate dataAtualizacao;
 
+    private Jogador dono;
+
     // Construtores
     public Jardim(String nome)
     {
