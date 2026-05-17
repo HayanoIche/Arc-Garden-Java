@@ -6,42 +6,44 @@ public class Planta
     private String nome;
     private String raridade;
     private int level;
-    private int xp;
     private boolean premiada;
-    private int preco;
     private String tipo;
-    private int murchamento;
-    private int valorRega;
 
-    // Getters & Setters
-    public String getNome()     { return nome; }
+    // To String
+    @Override
+    public String toString()
+    {
+        return "Nome: " + nome +
+               "\nRaridade: " + raridade +
+               "\nLevel: " + level +
+               "\nPremiada: " + premiada +
+               "\nTipo: " + tipo;
+    }
+
+    // Construtores
+    // Construtor Vazio
+    public Planta() {}
+
+    // Construtor Cheio
+    public Planta(String nome, String raridade, int level, boolean premiada, String tipo)
+    {
+        this.nome = nome;
+        this.raridade = raridade;
+        this.level = level;
+        this.premiada = premiada;
+        this.tipo = tipo;
+    }
+
+    // Metodos acessores
+    public String getNome() { return nome; }
     public String getRaridade() { return raridade; }
-    public int getLevel()       { return level; }
-    public int getXp()          { return xp; }
+    public int getLevel() { return level; }
     public boolean isPremiada() { return premiada; }
-    public int getPreco()       { return preco; }
-    public String getTipo()     { return tipo; }
-    public int getMurchamento() { return murchamento; }
-    public int getValorRega()   { return valorRega; }
+    public String getTipo() { return tipo; }
 
-    public void setNome(String nome)            { this.nome = nome; }
-    public void setRaridade(String raridade)    { this.raridade = raridade; }
-    public void setLevel(int level)             { this.level = level; }
-    public void setXp(int xp)                   { this.xp = xp; }
-    public void setPremiada(boolean premiada)   { this.premiada = premiada; }
-    public void setPreco(int preco)             { this.preco = preco; }
-    public void setTipo(String tipo)            { this.tipo = tipo; }
-    public void setMurchamento(int murchamento) { this.murchamento = murchamento; }
-    public void setValorRega(int valorRega)     { this.valorRega = valorRega; }
-
-    // Métodos Workers
-    public void regar()
-    {
-
-    }
-
-    public void vender()
-    {
-
-    }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setRaridade(String raridade) { this.raridade = raridade; }
+    public void setLevel(int level) { this.level = level; }
+    public void setPremiada(boolean premiada) { this.premiada = premiada; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 }

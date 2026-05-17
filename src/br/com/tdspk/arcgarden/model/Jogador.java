@@ -1,60 +1,45 @@
 package br.com.tdspk.arcgarden.model;
 
-//
-// Classe do jogador do ArcGarden
-//
+import java.util.ArrayList;
 
 public class Jogador
 {
-    // Atributo
-    private String nome;        // Nome do jogador
-    private int agua;           // "Moeda" do jogo
-    private int soulPoints;     // Pontos na soulUp
-    private int missoesFeitas;  // Quantidade de Missões que o jogador concluiu
+    // Atributos
+    private String nome;
+    private String cpf;
+    private int arcScore;
+    private int soulPoints;
 
-    // Getters & Setters
-    public String getNome() { return nome; }
-    public int getAgua() { return agua; }
-    public int getSoulPoints() { return soulPoints; }
-    public int getMissoesFeitas() { return missoesFeitas; }
+    private ArrayList<Missao> missoes = new ArrayList<>();
 
-    public void setNome(String nome) { this.nome = nome; }
+    // toString
 
     // Construtores
-    // Construtor vazio
+    // Construtor Vazio
     public Jogador() {}
 
-    // Construtor cheio
-    public Jogador(String nome)
-    {
+    // Construtor Cheio
+    public Jogador(String nome, String cpf, int arcScore, int soulPoints) {
         this.nome = nome;
-        this.agua = 0;
-        this.soulPoints = 0;
-        this.missoesFeitas = 0;
+        this.cpf = cpf;
+        this.arcScore = arcScore;
+        this.soulPoints = soulPoints;
     }
 
-    // Metodos Workers
-    public void gastarAgua()
-    {
+    // Métodos Acessores
+    public String getNome() { return nome; }
+    public String getCpf() { return cpf; }
+    public int getArcScore() {return arcScore; }
+    public int getSoulPoints() { return soulPoints; }
 
-    }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+    public void setArcScore(int arcScore) { this.arcScore = arcScore; }
+    public void setSoulPoints(int soulPoints) { this.soulPoints = soulPoints; }
 
-    public void ganharAgua()
-    {
+    // Métodos Workers
 
-    }
-
-    public void gastarSoulPoints()
-    {
-
-    }
-
-    public void ganharSoulPoints()
-    {
-
-    }
-
-    public void aumentarMissoes()
+    public void mostrarMissoes()
     {
 
     }
