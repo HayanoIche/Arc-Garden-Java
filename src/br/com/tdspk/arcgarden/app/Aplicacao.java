@@ -135,7 +135,7 @@ public class Aplicacao
             int level = scan.nextInt();
             scan.nextLine();
 
-            System.out.println("A planta é brilhante? \n1 - Sim \n2 - Nao): ");
+            System.out.println("A planta é brilhante? \n1 - Sim \n2 - Não");
             int opcaoPremiada = scan.nextInt();
             scan.nextLine();
             boolean premiada = (opcaoPremiada == 1);
