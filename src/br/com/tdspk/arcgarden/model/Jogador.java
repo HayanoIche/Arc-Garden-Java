@@ -38,7 +38,6 @@ public class Jogador
     public void setSoulPoints(int soulPoints) { this.soulPoints = soulPoints; }
 
     // Métodos Workers
-
     public void mostrarMissoes()
     {
 
