@@ -9,6 +9,14 @@ public class Jardim
     private String tema;
     private ArrayList<Planta> plantas = new ArrayList<>();
 
+    // ToString
+    @Override
+    public String toString()
+    {
+        return "\nnome: " + nome +
+               "\ntema: " + tema;
+    }
+
     // Construtores
     // Construtor Vazio
     public Jardim() {}
@@ -34,6 +42,10 @@ public class Jardim
 
     public void mostrarPlantas()
     {
+        System.out.println("----------------------");
+        System.out.println("     SUAS PLANTAS     ");
+        System.out.println("----------------------\n");
+
         for(int i = 0; i < plantas.size(); i += 1)
         {
             System.out.println(plantas.get(i));

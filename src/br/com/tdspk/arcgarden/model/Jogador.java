@@ -14,6 +14,16 @@ public class Jogador
 
     // toString
 
+
+    @Override
+    public String toString() {
+        return "Jogador " +
+                "\nnome: " + nome +
+                "\ncpf: " + cpf +
+                "\narcScore: " + arcScore +
+                "\nsoulPoints: " + soulPoints;
+    }
+
     // Construtores
     // Construtor Vazio
     public Jogador() {}
@@ -37,9 +47,22 @@ public class Jogador
     public void setArcScore(int arcScore) { this.arcScore = arcScore; }
     public void setSoulPoints(int soulPoints) { this.soulPoints = soulPoints; }
 
-    // Métodos Workers
+    // Metodos Workers
     public void mostrarMissoes()
     {
+        System.out.println("\n--- Missões do Jogador: " + this.nome + " ---");
+        if (missoes.isEmpty()) {
+            System.out.println("Nenhuma missão cadastrada para este jogador.");
+        } else {
+            for (int i = 0; i < missoes.size(); i++) {
+                Missao m = missoes.get(i);
+                System.out.println((i + 1) + ". " + m.getNome() + " [" + m.getDificuldade() + "] - Concluída em: " + m.getDataDeConclusao());
+            }
+        }
+        System.out.println("---------------------------------------");
+    }
 
+    public void adicionarMissao(Missao missao) {
+        this.missoes.add(missao);
     }
 }

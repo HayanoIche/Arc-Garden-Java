@@ -13,11 +13,11 @@ public class Planta
     @Override
     public String toString()
     {
-        return "Nome: " + nome +
-               "\nRaridade: " + raridade +
-               "\nLevel: " + level +
-               "\nPremiada: " + premiada +
-               "\nTipo: " + tipo;
+        return nome +
+               "\n  Raridade: " + raridade +
+               "\n  Level: " + level +
+               "\n  Brilhante: " + premiada +
+               "\n  Tipo: " + tipo + "\n";
     }
 
     // Construtores
