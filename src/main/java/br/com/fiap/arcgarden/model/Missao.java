@@ -1,4 +1,4 @@
-package br.com.tdspk.arcgarden.model;
+package br.com.fiap.arcgarden.model;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package br.com.tdspk.arcgarden.model;
+package br.com.fiap.arcgarden.model;
 
 public class Planta
 {
@@ -14,10 +14,10 @@ public class Planta
     public String toString()
     {
         return nome +
-               "\n  Raridade: " + raridade +
-               "\n  Level: " + level +
-               "\n  Brilhante: " + premiada +
-               "\n  Tipo: " + tipo + "\n";
+                "\n  Raridade: " + raridade +
+                "\n  Level: " + level +
+                "\n  Brilhante: " + premiada +
+                "\n  Tipo: " + tipo + "\n";
     }
 
     // Construtores

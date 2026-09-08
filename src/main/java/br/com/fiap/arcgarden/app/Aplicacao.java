@@ -1,10 +1,9 @@
-package br.com.tdspk.arcgarden.app;
+package br.com.fiap.arcgarden.app;
 
-import br.com.tdspk.arcgarden.model.*;
+import br.com.fiap.arcgarden.model.*;
 
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.time.format.DateTimeFormatter;
 
 public class Aplicacao
 {

@@ -1,4 +1,4 @@
-package br.com.tdspk.arcgarden.model;
+package br.com.fiap.arcgarden.model;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class Jardim
     public String toString()
     {
         return "\nnome: " + nome +
-               "\ntema: " + tema;
+                "\ntema: " + tema;
     }
 
     // Construtores
