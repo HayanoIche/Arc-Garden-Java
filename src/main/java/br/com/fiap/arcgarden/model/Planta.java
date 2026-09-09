@@ -3,47 +3,37 @@ package br.com.fiap.arcgarden.model;
 public class Planta
 {
     // Atributos
-    private String nome;
+    private int id;
     private String raridade;
     private int level;
     private boolean premiada;
-    private String tipo;
-
-    // To String
-    @Override
-    public String toString()
-    {
-        return nome +
-                "\n  Raridade: " + raridade +
-                "\n  Level: " + level +
-                "\n  Brilhante: " + premiada +
-                "\n  Tipo: " + tipo + "\n";
-    }
+    private int tipoId;
 
     // Construtores
-    // Construtor Vazio
-    public Planta() {}
-
     // Construtor Cheio
-    public Planta(String nome, String raridade, int level, boolean premiada, String tipo)
-    {
-        this.nome = nome;
+    public Planta(int id, String raridade, int level, boolean premiada, int tipoId) {
+        this.id = id;
         this.raridade = raridade;
         this.level = level;
         this.premiada = premiada;
-        this.tipo = tipo;
+        this.tipoId = tipoId;
     }
 
-    // Metodos acessores
-    public String getNome() { return nome; }
+    // Construtor Vazio
+    public Planta() {}
+
+    // Métodos Acessores
+    // Getters
+    public int getId() { return id; }
     public String getRaridade() { return raridade; }
     public int getLevel() { return level; }
     public boolean isPremiada() { return premiada; }
-    public String getTipo() { return tipo; }
+    public int getTipoId() { return tipoId; }
 
-    public void setNome(String nome) { this.nome = nome; }
+    // Setters
+    public void setId(int id) { this.id = id; }
     public void setRaridade(String raridade) { this.raridade = raridade; }
     public void setLevel(int level) { this.level = level; }
     public void setPremiada(boolean premiada) { this.premiada = premiada; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public void setTipoId(int tipo_id) { this.tipoId = tipo_id; }
 }
