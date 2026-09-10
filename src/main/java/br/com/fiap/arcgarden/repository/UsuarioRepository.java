@@ -11,7 +11,8 @@ public class UsuarioRepository
     private static String SQL_INSERT = "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
     private static String SQL_DELETE = "DELETE FROM tb_usuarios WHERE usuario_id = ?";
     private static String SQL_SELECT_NOME = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
-    private static String SQL_SELECT_ID = "SELECT id, nome, telefone, nascimento FROM tb_paciente WHERE id = ?";
+    private static String SQL_SELECT_ID = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE id = ?";
+    private static String SQL_SELECT_CPF = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
 
     // CREATE
     public int create(Usuario user) throws Exception {
@@ -42,7 +43,7 @@ public class UsuarioRepository
     // READ
     public List<Usuario> readByName(String name) throws Exception
     {
-        try (Connection con = new ConnectionFactory().getConnection();
+        try (Connection con = ConnectionFactory.getConnection();
             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_NOME)) {
 
             Usuario user = null;
@@ -63,6 +64,36 @@ public class UsuarioRepository
             }
 
             return resposta;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public Usuario readByCpf(String cpf) throws Exception
+    {
+        try (Connection con = ConnectionFactory.getConnection();
+            PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_CPF)) {
+
+            br.com.fiap.arcgarden.model.Usuario user = null;
+
+            pstmt.setString(1, "%" + cpf.toLowerCase() + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                user = new br.com.fiap.arcgarden.model.Usuario();
+                user.setId(rs.getInt("usuario_id"));
+                user.setNome(rs.getString("nome"));
+                user.setCpf(rs.getString("cpf"));
+                user.setArcScore(rs.getInt("arc_score"));
+                user.setStatus(rs.getString("status"));
+            }
+
+            if (user != null) {
+                System.out.println("Usuário achado!");
+            }
+            return user;
+
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
