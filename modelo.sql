@@ -12,7 +12,6 @@ CREATE TABLE tb_usuarios (
     nome            VARCHAR2(120)   NOT NULL,
     cpf             VARCHAR2(11)    NOT NULL,
     arc_score       INTEGER         NOT NULL,
-    soul_points     INTEGER         NOT NULL,
     status          VARCHAR2(20)    NOT NULL,
 
     CONSTRAINT tb_usuarios_pk PRIMARY KEY (usuario_id),
