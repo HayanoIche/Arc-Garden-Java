@@ -2,67 +2,63 @@ package br.com.fiap.arcgarden.model;
 
 import java.util.ArrayList;
 
-public class Jogador
+public class Usuario
 {
     // Atributos
+    private int id;
     private String nome;
     private String cpf;
     private int arcScore;
-    private int soulPoints;
+    private String status;
 
-    private ArrayList<Missao> missoes = new ArrayList<>();
-
-    // toString
-
-
-    @Override
-    public String toString() {
-        return "Jogador " +
-                "\nnome: " + nome +
-                "\ncpf: " + cpf +
-                "\narcScore: " + arcScore +
-                "\nsoulPoints: " + soulPoints;
-    }
+    private ArrayList<Missao> missoesConcluidas = new ArrayList<>();
+    private ArrayList<ItemLoja> itensComprados  = new ArrayList<>();
 
     // Construtores
-    // Construtor Vazio
-    public Jogador() {}
-
     // Construtor Cheio
-    public Jogador(String nome, String cpf, int arcScore, int soulPoints) {
+    public Usuario(String nome, String cpf, int arcScore, String status) {
         this.nome = nome;
         this.cpf = cpf;
         this.arcScore = arcScore;
-        this.soulPoints = soulPoints;
+        this.status = status;
     }
 
+    // Construtor Vazio
+    public Usuario() {}
+
     // Métodos Acessores
+    // Getters
+    public int getId() { return id; }
     public String getNome() { return nome; }
     public String getCpf() { return cpf; }
-    public int getArcScore() {return arcScore; }
-    public int getSoulPoints() { return soulPoints; }
+    public int getArcScore() { return arcScore; }
+    public String getStatus() { return status; }
 
+    // Setters
+    public void setId(int id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
     public void setCpf(String cpf) { this.cpf = cpf; }
     public void setArcScore(int arcScore) { this.arcScore = arcScore; }
-    public void setSoulPoints(int soulPoints) { this.soulPoints = soulPoints; }
+    public void setStatus(String status) { this.status = status; }
 
-    // Metodos Workers
-    public void mostrarMissoes()
+    // Métodos Workers
+
+    // Função pra printar na tela todas as missões
+    public void mostrarMissoesConcluidas()
     {
         System.out.println("\n--- Missões do Jogador: " + this.nome + " ---");
-        if (missoes.isEmpty()) {
+        if (missoesConcluidas.isEmpty()) {
             System.out.println("Nenhuma missão cadastrada para este jogador.");
         } else {
-            for (int i = 0; i < missoes.size(); i++) {
-                Missao m = missoes.get(i);
+            for (int i = 0; i < missoesConcluidas.size(); i++) {
+                Missao m = missoesConcluidas.get(i);
                 System.out.println((i + 1) + ". " + m.getNome() + " [" + m.getDificuldade() + "] - Concluída em: " + m.getDataDeConclusao());
             }
         }
         System.out.println("---------------------------------------");
     }
 
-    public void adicionarMissao(Missao missao) {
-        this.missoes.add(missao);
+    public void adicionarMissaoConcluida(Missao missao) {
+        this.missoesConcluidas.add(missao);
     }
 }
