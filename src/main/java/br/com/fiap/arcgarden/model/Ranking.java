@@ -6,8 +6,8 @@ import java.util.Comparator;
 public class Ranking
 {
     // Atributos
-    private ArrayList<Jogador> rankingMensal = new ArrayList<>();
-    private ArrayList<Jogador> rankingGlobal = new ArrayList<>();
+    private ArrayList<Usuario> rankingMensal = new ArrayList<>();
+    private ArrayList<Usuario> rankingGlobal = new ArrayList<>();
 
     // Construtor vazio
     public Ranking() {}
@@ -15,7 +15,7 @@ public class Ranking
     // Metodo para ordenar os jogadores do maior score para o menor
     public void calcularRankingMensal()
     {
-        rankingMensal.sort(Comparator.comparingInt(Jogador::getArcScore).reversed());
+        rankingMensal.sort(Comparator.comparingInt(Usuario::getArcScore).reversed());
     }
 
     public void mostrarRankingMensal()
@@ -29,7 +29,7 @@ public class Ranking
         System.out.println("----------------------------------------");
 
         for (int i = 0; i < rankingMensal.size(); i++) {
-            Jogador j = rankingMensal.get(i);
+            Usuario j = rankingMensal.get(i);
 
             int posicao = i + 1;
 
@@ -43,8 +43,8 @@ public class Ranking
         System.out.println("---------------------------------------\n");
     }
 
-    public void adicionarJogadorAoMensal(Jogador jogador)
+    public void adicionarJogadorAoMensal(Usuario user)
     {
-        this.rankingMensal.add(jogador);
+        this.rankingMensal.add(user);
     }
 }
