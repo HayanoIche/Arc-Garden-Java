@@ -14,6 +14,18 @@ public class Usuario
     private ArrayList<Missao> missoesConcluidas = new ArrayList<>();
     private ArrayList<ItemLoja> itensComprados  = new ArrayList<>();
 
+    // ToString
+    @Override
+    public String toString() {
+        return "\nUsuario " + nome +
+                "\n   id: " + id +
+                "\n   cpf: " + cpf +
+                "\n   arcScore: " + arcScore +
+                "\n   status: " + status +
+                "\n   missoesConcluidas: " + missoesConcluidas +
+                "\n   itensComprados: " + itensComprados;
+    }
+
     // Construtores
     // Construtor Cheio
     public Usuario(String nome, String cpf, int arcScore, String status) {
