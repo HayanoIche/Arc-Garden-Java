@@ -16,7 +16,7 @@ public class UsuarioRepository
     // CREATE
     public int create(Usuario user) throws Exception {
         try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SQL_INSERT, new String[]{"usuario_id"})) {
+            PreparedStatement pstmt = con.prepareStatement(SQL_INSERT, new String[]{"usuario_id"})) {
 
             pstmt.setString(1, user.getNome());
             pstmt.setString(2, user.getCpf());
