@@ -4,36 +4,33 @@ public class Planta
 {
     // Atributos
     private int id;
-    private String raridade;
-    private int level;
-    private boolean premiada;
-    private int tipoId;
+    private String nome;
+    private String categoria;
+    private int xpMaximo;
+    private String descricao;
 
     // Construtores
-    // Construtor Cheio
-    public Planta(int id, String raridade, int level, boolean premiada, int tipoId) {
-        this.id = id;
-        this.raridade = raridade;
-        this.level = level;
-        this.premiada = premiada;
-        this.tipoId = tipoId;
+    public Planta(String nome, String categoria, int xpMaximo, String descricao)
+    {
+        this.nome = nome;
+        this.categoria = categoria;
+        this.xpMaximo = xpMaximo;
+        this.descricao = descricao;
     }
 
-    // Construtor Vazio
     public Planta() {}
 
-    // Métodos Acessores
     // Getters
     public int getId() { return id; }
-    public String getRaridade() { return raridade; }
-    public int getLevel() { return level; }
-    public boolean isPremiada() { return premiada; }
-    public int getTipoId() { return tipoId; }
+    public String getNome() { return nome; }
+    public String getCategoria() { return categoria; }
+    public int getXpMaximo() { return xpMaximo; }
+    public String getDescricao() { return descricao; }
 
     // Setters
     public void setId(int id) { this.id = id; }
-    public void setRaridade(String raridade) { this.raridade = raridade; }
-    public void setLevel(int level) { this.level = level; }
-    public void setPremiada(boolean premiada) { this.premiada = premiada; }
-    public void setTipoId(int tipo_id) { this.tipoId = tipo_id; }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public void setXpMaximo(int xp_maximo) { this.xpMaximo = xp_maximo; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 }

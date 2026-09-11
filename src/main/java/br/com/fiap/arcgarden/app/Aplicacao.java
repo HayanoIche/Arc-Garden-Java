@@ -1,6 +1,7 @@
 package br.com.fiap.arcgarden.app;
 
 import br.com.fiap.arcgarden.model.*;
+import br.com.fiap.arcgarden.repository.PlantaRepository;
 import br.com.fiap.arcgarden.repository.UsuarioRepository;
 
 import javax.swing.*;
@@ -15,13 +16,17 @@ public class Aplicacao
 
     public static void main(String[] args) throws Exception
     {
+        // Menu
         Menu menu = new Menu();
 
+        // Repositories
         UsuarioRepository urep = new UsuarioRepository();
+        PlantaRepository  prep = new PlantaRepository();
 
-        // Instanciando os objetos
+        // Usuario do sistema
         Usuario usuario = new Usuario();
 
+        // Programa principal
         while(rodando)
         {
             // ----------------------------------------------
@@ -193,9 +198,22 @@ public class Aplicacao
             }
 
             // ----------------------------------------------
-            if (etapa == "comprar item")
+            if (etapa == "cadastrar planta")
             {
-                
+                Planta planta = menu.exibirFormularioCadastroPlanta();
+
+                if (planta != null)
+                {
+                    prep.create(planta);
+                    JOptionPane.showMessageDialog(null, "Planta cadastrada com sucesso!");
+                    etapa = "inicio";
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Cadastro de planta cancelado!");
+                    etapa = "inicio";
+                }
+
             }
         }
     }

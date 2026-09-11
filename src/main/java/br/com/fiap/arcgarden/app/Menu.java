@@ -1,8 +1,10 @@
 package br.com.fiap.arcgarden.app;
 
+import br.com.fiap.arcgarden.model.Planta;
 import br.com.fiap.arcgarden.model.Usuario;
 
 import java.awt.*;
+import java.util.Objects;
 import javax.swing.*;
 
 public class Menu
@@ -114,6 +116,76 @@ public class Menu
         }
 
         return null;
+    }
+
+    public static Planta exibirFormularioCadastroPlanta()
+    {
+        while(true) {
+            // nome, categoria, xp_maximo, descricao
+            JTextField campo1 = new JTextField();
+            JTextField campo3 = new JTextField();
+            JTextField campo4 = new JTextField();
+
+            JPanel painel = new JPanel(new GridLayout(4, 2, 5, 5));
+
+            // Caixa de seleção de categoria
+            String[] opcoes = {"AGUA", "ENERGIA", "RENOVACAO", "NATUREZA"};
+            JComboBox<String> caixaCategorias = new JComboBox<>(opcoes);
+            caixaCategorias.setSelectedIndex(-1);
+
+            painel.add(new JLabel("Nome: "));
+            painel.add(campo1);
+            painel.add(new JLabel("Categoria: "));
+            painel.add(caixaCategorias);
+            painel.add(new JLabel("Xp Máximo: "));
+            painel.add(campo3);
+            painel.add(new JLabel("Descricao: "));
+            painel.add(campo4);
+
+            int opcao = JOptionPane.showConfirmDialog(
+                    null,
+                    painel,
+                    "Cadastro de planta",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            // 4. Capturar as respostas se o usuário clicar em OK
+            int valor3 = 0;
+
+            if (opcao == JOptionPane.OK_OPTION) {
+                String valor1 = campo1.getText();
+                String valor2 = "";
+                String valor4 = campo4.getText();
+
+                if (valor1 == null || valor1.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! campo 1 vazio");
+                    continue;
+                }
+
+                if (valor4 == null || valor4.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! campo 4 vazio");
+                    continue;
+                }
+
+                try {
+                    valor3 = Integer.parseInt(campo3.getText());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! xp máximo não numerico");
+                    continue;
+                }
+
+                int valor2Index = caixaCategorias.getSelectedIndex();
+
+                if (valor2Index != -1) {
+                    valor2 = opcoes[valor2Index];
+                }
+
+                return new Planta(valor1, valor2, valor3, valor4);
+            }
+
+            return null;
+        }
     }
 }
 
