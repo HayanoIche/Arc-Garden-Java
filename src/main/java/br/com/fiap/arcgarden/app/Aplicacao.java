@@ -1,13 +1,11 @@
 package br.com.fiap.arcgarden.app;
 
 import br.com.fiap.arcgarden.model.*;
+import br.com.fiap.arcgarden.repository.MissaoRepository;
 import br.com.fiap.arcgarden.repository.PlantaRepository;
 import br.com.fiap.arcgarden.repository.UsuarioRepository;
 
 import javax.swing.*;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Scanner;
 
 public class Aplicacao
 {
@@ -22,6 +20,7 @@ public class Aplicacao
         // Repositories
         UsuarioRepository urep = new UsuarioRepository();
         PlantaRepository  prep = new PlantaRepository();
+        MissaoRepository  mrep = new MissaoRepository();
 
         // Usuario do sistema
         Usuario usuario = new Usuario();
@@ -213,7 +212,24 @@ public class Aplicacao
                     JOptionPane.showMessageDialog(null, "Cadastro de planta cancelado!");
                     etapa = "inicio";
                 }
+            }
 
+            // ----------------------------------------------
+            if (etapa == "cadastrar missão")
+            {
+                Missao missao = menu.exibirFormularioCadastroMissao();
+
+                if (missao != null)
+                {
+                    mrep.create(missao);
+                    JOptionPane.showMessageDialog(null, "Missão cadastrada com sucesso!");
+                    etapa = "inicio";
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Cadastro de missão cancelado!");
+                    etapa = "inicio";
+                }
             }
         }
     }

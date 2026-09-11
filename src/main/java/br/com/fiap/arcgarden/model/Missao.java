@@ -2,8 +2,8 @@ package br.com.fiap.arcgarden.model;
 
 import java.time.LocalDate;
 
-public class Missao {
-
+public class Missao
+{
     private int id;
     private String nome;
     private String descricao;
@@ -14,8 +14,7 @@ public class Missao {
 
     public Missao() {}
 
-    public Missao(int id, String nome, String descricao, String dificuldade, int vezes, int recompensaPontos) {
-        this.id = id;
+    public Missao(String nome, String descricao, String dificuldade, int vezes, int recompensaPontos) {
         this.nome = nome;
         this.descricao = descricao;
         this.dificuldade = dificuldade;

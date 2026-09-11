@@ -81,6 +81,7 @@ CONSTRAINT tb_plantas_ck
         )
 );
 
+
 CREATE TABLE tb_missoes (
 missao_id INTEGER GENERATED ALWAYS AS IDENTITY,
 nome VARCHAR2(200) NOT NULL,

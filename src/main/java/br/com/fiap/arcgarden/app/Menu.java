@@ -1,5 +1,6 @@
 package br.com.fiap.arcgarden.app;
 
+import br.com.fiap.arcgarden.model.Missao;
 import br.com.fiap.arcgarden.model.Planta;
 import br.com.fiap.arcgarden.model.Usuario;
 
@@ -120,7 +121,8 @@ public class Menu
 
     public static Planta exibirFormularioCadastroPlanta()
     {
-        while(true) {
+        while(true)
+        {
             // nome, categoria, xp_maximo, descricao
             JTextField campo1 = new JTextField();
             JTextField campo3 = new JTextField();
@@ -150,7 +152,7 @@ public class Menu
                     JOptionPane.PLAIN_MESSAGE
             );
 
-            // 4. Capturar as respostas se o usuário clicar em OK
+            // Capturar as respostas
             int valor3 = 0;
 
             if (opcao == JOptionPane.OK_OPTION) {
@@ -183,7 +185,107 @@ public class Menu
 
                 return new Planta(valor1, valor2, valor3, valor4);
             }
+            return null;
+        }
+    }
 
+    /*
+        CREATE TABLE tb_missoes (
+        missao_id INTEGER GENERATED ALWAYS AS IDENTITY,
+        nome VARCHAR2(200) NOT NULL,
+        descricao VARCHAR2(500) NOT NULL,
+        dificuldade VARCHAR2(1) NOT NULL,
+        vezes INTEGER NOT NULL,
+        recompensa_pontos INTEGER NOT NULL,
+
+        CONSTRAINT tb_missoes_pk PRIMARY KEY (missao_id),
+
+        CONSTRAINT tb_missoes_ck
+            CHECK (
+                dificuldade IN ('F', 'M', 'D')
+                    AND vezes > 0
+                    AND recompensa_pontos >= 0
+                    AND recompensa_pontos <= 100
+                )
+        );
+     */
+    public static Missao exibirFormularioCadastroMissao()
+    {
+        while(true)
+        {
+            JPanel painel = new JPanel(new GridLayout(5, 2, 5, 5));
+
+            // nome, descricao, dificulade, vezes recompensa_pontos
+            JTextField campo1 = new JTextField(); // Nome
+            JTextField campo2 = new JTextField(); // Descricao
+            JTextField campo4 = new JTextField(); // Vezes
+            JTextField campo5 = new JTextField(); // Recompensa_pontos
+
+            // Caixa de seleção de dificuldade
+            String[] opcoes = {"F", "M", "D"};
+            JComboBox<String> caixaDificuldades = new JComboBox<>(opcoes);
+            caixaDificuldades.setSelectedIndex(-1);
+
+            painel.add(new JLabel("Nome: "));
+            painel.add(campo1);
+            painel.add(new JLabel("Descricao: "));
+            painel.add(campo2);
+            painel.add(new JLabel("Dificuldade: "));
+            painel.add(caixaDificuldades);
+            painel.add(new JLabel("Vezes: "));
+            painel.add(campo4);
+            painel.add(new JLabel("Recompensa em pontos: "));
+            painel.add(campo5);
+
+            int opcao = JOptionPane.showConfirmDialog(
+                    null,
+                    painel,
+                    "Cadastro de missão",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+
+            // Capturar as respostas
+            if (opcao == JOptionPane.OK_OPTION)
+            {
+                String valor1 = campo1.getText();
+                String valor2 = campo2.getText();
+                String valor3 = "";
+                int valor4 = 0;
+                int valor5 = 0;
+
+                if (valor1 == null || valor1.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! campo 1 vazio");
+                    continue;
+                }
+
+                if (valor2 == null || valor2.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! campo 4 vazio");
+                    continue;
+                }
+
+                int valor3Index = caixaDificuldades.getSelectedIndex();
+
+                if (valor3Index != -1) {
+                    valor3 = opcoes[valor3Index];
+                }
+
+                try {
+                    valor4 = Integer.parseInt(campo4.getText());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! Vezes não numerico");
+                    continue;
+                }
+
+                try {
+                    valor5 = Integer.parseInt(campo5.getText());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! Recompensa em pontos não numerico");
+                    continue;
+                }
+
+                return new Missao(valor1, valor2, valor3, valor4, valor5);
+            }
             return null;
         }
     }
