@@ -6,6 +6,7 @@ import br.com.fiap.arcgarden.repository.PlantaRepository;
 import br.com.fiap.arcgarden.repository.UsuarioRepository;
 
 import javax.swing.*;
+import java.util.List;
 
 public class Aplicacao
 {
@@ -52,11 +53,11 @@ public class Aplicacao
             // ----------------------------------------------
             if (etapa == "logar usuario")
             {
-                String cpf = JOptionPane.showInputDialog("Digite seu CPF (XXXXXXXXXXX):");
+                String cpf = JOptionPane.showInputDialog("Digite seu CPF (XXX.XXX.XXX-XX):");
 
                 if (cpf != null)
                 {
-                    if (cpf.length() == 11)
+                    if (cpf.length() == 14)
                     {
                         JOptionPane.showMessageDialog(null, "Buscando no banco. . .");
 
@@ -231,6 +232,68 @@ public class Aplicacao
                     etapa = "inicio";
                 }
             }
+
+            // ----------------------------------------------
+            if (etapa == "ver plantas")
+            {
+                try {
+                    List<Planta> listaPlantas = prep.readAll();
+
+                    if (listaPlantas.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(null, "Nenhuma planta encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                        etapa = "inicio";
+                    }
+
+                    for (Planta planta : listaPlantas)
+                    {
+                        String info = "ID: " + planta.getId() + "\n" +
+                                "Nome: " + planta.getNome() + "\n" +
+                                "Categoria: " + planta.getCategoria() + "\n" +
+                                "XP Máximo: " + planta.getXpMaximo() + "\n" +
+                                "Descrição: " + planta.getDescricao();
+
+                        JOptionPane.showMessageDialog(null, info, "Detalhes da Planta", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro ao carregar as plantas: " + e.getMessage());
+                }
+
+                etapa = "inicio";
+            }
+
+            // ----------------------------------------------
+            if (etapa == "ver missões")
+            {
+                try {
+                    List<Missao> listaMissao = mrep.readAll();
+
+                    if (listaMissao.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(null, "Nenhuma missão encontrada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                        etapa = "inicio";
+                    }
+
+                    for (Missao missao : listaMissao)
+                    {
+                        // missao_id, nome, descricao, dificuldade, vezes, recompensa_pontos
+                        String info = "ID: " + missao.getId() + "\n" +
+                                "Nome: " + missao.getNome() + "\n" +
+                                "Descricao: " + missao.getDescricao() + "\n" +
+                                "Dificuldade: " + missao.getDificuldade() + "\n" +
+                                "Vezes: " + missao.getVezes() + "\n" +
+                                "Recompensa Pontos" + missao.getRecompensaPontos();
+
+                        JOptionPane.showMessageDialog(null, info, "Detalhes da missão", JOptionPane.INFORMATION_MESSAGE);
+                        etapa = "inicio";
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Erro ao carregar as missões" + e.getMessage());
+                    etapa = "inicio";
+                }
+            }
+
+
         }
     }
 };

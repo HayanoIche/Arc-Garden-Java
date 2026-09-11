@@ -94,7 +94,7 @@ public class Menu
 
         painel.add(new JLabel("Nome: "));
         painel.add(campo1);
-        painel.add(new JLabel("Cpf: "));
+        painel.add(new JLabel("Cpf (XXX.XXX.XXX-XX): "));
         painel.add(campo2);
         painel.add(new JLabel("ArcScore: "));
         painel.add(campo3);
@@ -260,7 +260,7 @@ public class Menu
                 }
 
                 if (valor2 == null || valor2.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Erro no cadastro! campo 4 vazio");
+                    JOptionPane.showMessageDialog(null, "Erro no cadastro! campo 2 vazio");
                     continue;
                 }
 
