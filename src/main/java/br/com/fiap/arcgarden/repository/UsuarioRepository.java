@@ -1,6 +1,7 @@
 package br.com.fiap.arcgarden.repository;
 
 import br.com.fiap.arcgarden.model.ItemLoja;
+import br.com.fiap.arcgarden.model.Missao;
 import br.com.fiap.arcgarden.model.Usuario;
 
 import java.sql.*;
@@ -14,27 +15,39 @@ public class UsuarioRepository
             "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
     private static final String SQL_INSERT_COMPRA =
             "INSERT INTO tb_itens_comprados(data_compra, quantidade, usuario_id, item_loja_id) VALUES (SYSDATE, ?, ?, ?)";
+    private static final String SQL_INSERT_MISSAO_CONCLUIDA =
+            "INSERT INTO tb_missoes_concluidas(missao_id, usuario_id, data_conclusao, pontos_ganhos) VALUES (?, ?, SYSDATE, ?)";
+
     private static final String SQL_DELETE_USUARIO =
             "DELETE FROM tb_usuarios WHERE usuario_id = ?";
     private static final String SQL_DELETE_COMPRAS =
             "DELETE FROM tb_itens_comprados WHERE usuario_id = ?";
+    private static final String SQL_DELETE_MISSOES_CONCLUIDAS =
+            "DELETE FROM tb_missoes_concluidas WHERE usuario_id = ?";
+
     private static final String SQL_SELECT_ID =
             "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE usuario_id = ?";
     private static final String SQL_SELECT_NOME =
             "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
     private static final String SQL_SELECT_CPF =
             "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
+
     private static final String SQL_SELECT_ITENS =
             "SELECT l.item_loja_id, l.nome, l.tipo, l.preco_agua " +
                     "FROM tb_itens_comprados c " +
                     "INNER JOIN tb_itens_loja l ON c.item_loja_id = l.item_loja_id " +
                     "WHERE c.usuario_id = ?";
+    private static final String SQL_SELECT_MISSOES =
+            "SELECT m.missao_id, m.nome, m.descricao, m.dificuldade, m.vezes, m.recompensa_pontos, mc.data_conclusao " +
+                    "FROM tb_missoes_concluidas mc " +
+                    "INNER JOIN tb_missoes m ON mc.missao_id = m.missao_id " +
+                    "WHERE mc.usuario_id = ?";
 
     // CREATE
     public int create(Usuario user) throws Exception
     {
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_USUARIO, new String[]{"usuario_id"})) {
+             PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_USUARIO, new String[]{"usuario_id"})) {
             pstmt.setString(1, user.getNome());
             pstmt.setString(2, user.getCpf());
             pstmt.setInt(3, user.getArcScore());
@@ -51,6 +64,12 @@ public class UsuarioRepository
             if (user.getItensComprados() != null) {
                 for (ItemLoja item : user.getItensComprados()) {
                     comprarItem(con, user.getId(), item.getId(), 1);
+                }
+            }
+
+            if (user.getMissoesConcluidas() != null) {
+                for (Missao missao : user.getMissoesConcluidas()) {
+                    concluirMissao(con, user.getId(), missao.getId(), missao.getRecompensaPontos());
                 }
             }
 
@@ -80,11 +99,29 @@ public class UsuarioRepository
         }
     }
 
+    // REGISTRAR MISSÃO CONCLUÍDA
+    public void concluirMissao(int usuarioId, int missaoId, int pontosGanhos) throws Exception
+    {
+        try (Connection con = ConnectionFactory.getConnection()) {
+            concluirMissao(con, usuarioId, missaoId, pontosGanhos);
+        }
+    }
+
+    private void concluirMissao(Connection con, int usuarioId, int missaoId, int pontosGanhos) throws SQLException
+    {
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_MISSAO_CONCLUIDA)) {
+            pstmt.setInt(1, missaoId);
+            pstmt.setInt(2, usuarioId);
+            pstmt.setInt(3, pontosGanhos);
+            pstmt.executeUpdate();
+        }
+    }
+
     // READ BY ID
     public Usuario read(long id) throws Exception
     {
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ID)) {
+             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ID)) {
 
             pstmt.setLong(1, id);
             Usuario user = null;
@@ -93,6 +130,7 @@ public class UsuarioRepository
                 if (rs.next()) {
                     user = mapearUsuario(rs);
                     user.setItensComprados(carregarItens(con, user.getId()));
+                    user.setMissoesConcluidas(carregarMissoes(con, user.getId()));
                 }
             }
 
@@ -104,7 +142,8 @@ public class UsuarioRepository
     }
 
     // READ BY NAME
-    public List<Usuario> readByName(String name) throws Exception {
+    public List<Usuario> readByName(String name) throws Exception
+    {
         try (Connection con = ConnectionFactory.getConnection();
              PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_NOME)) {
 
@@ -115,6 +154,7 @@ public class UsuarioRepository
                 while (rs.next()) {
                     Usuario user = mapearUsuario(rs);
                     user.setItensComprados(carregarItens(con, user.getId()));
+                    user.setMissoesConcluidas(carregarMissoes(con, user.getId()));
                     lista.add(user);
                 }
             }
@@ -130,7 +170,7 @@ public class UsuarioRepository
     public Usuario readByCpf(String cpf) throws Exception
     {
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_CPF)) {
+             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_CPF)) {
 
             Usuario user = null;
             pstmt.setString(1, "%" + cpf.toLowerCase() + "%");
@@ -139,6 +179,7 @@ public class UsuarioRepository
                 if (rs.next()) {
                     user = mapearUsuario(rs);
                     user.setItensComprados(carregarItens(con, user.getId()));
+                    user.setMissoesConcluidas(carregarMissoes(con, user.getId()));
                 }
             }
 
@@ -158,6 +199,11 @@ public class UsuarioRepository
                 pstmt.executeUpdate();
             }
 
+            try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_MISSOES_CONCLUIDAS)) {
+                pstmt.setInt(1, id);
+                pstmt.executeUpdate();
+            }
+
             try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_USUARIO)) {
                 pstmt.setInt(1, id);
                 return pstmt.executeUpdate();
@@ -169,7 +215,8 @@ public class UsuarioRepository
     }
 
     // Auxiliar: Busca os itens comprados pelo usuário na associativa
-    private ArrayList<ItemLoja> carregarItens(Connection con, int usuarioId) throws SQLException {
+    private ArrayList<ItemLoja> carregarItens(Connection con, int usuarioId) throws SQLException
+    {
         ArrayList<ItemLoja> itens = new ArrayList<>();
         try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ITENS)) {
             pstmt.setInt(1, usuarioId);
@@ -187,8 +234,37 @@ public class UsuarioRepository
         return itens;
     }
 
+    // Auxiliar: Busca as missões concluídas pelo usuário na associativa
+    private ArrayList<Missao> carregarMissoes(Connection con, int usuarioId) throws SQLException
+    {
+        ArrayList<Missao> missoes = new ArrayList<>();
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_MISSOES)) {
+            pstmt.setInt(1, usuarioId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Missao m = new Missao();
+                    m.setId(rs.getInt("missao_id"));
+                    m.setNome(rs.getString("nome"));
+                    m.setDescricao(rs.getString("descricao"));
+                    m.setDificuldade(rs.getString("dificuldade"));
+                    m.setVezes(rs.getInt("vezes"));
+                    m.setRecompensaPontos(rs.getInt("recompensa_pontos"));
+
+                    Date data = rs.getDate("data_conclusao");
+                    if (data != null) {
+                        m.setDataDeConclusao(data.toLocalDate());
+                    }
+
+                    missoes.add(m);
+                }
+            }
+        }
+        return missoes;
+    }
+
     // Auxiliar: Instancia e popula a entidade Usuario
-    private Usuario mapearUsuario(ResultSet rs) throws SQLException {
+    private Usuario mapearUsuario(ResultSet rs) throws SQLException
+    {
         Usuario user = new Usuario();
         user.setId(rs.getInt("usuario_id"));
         user.setNome(rs.getString("nome"));
