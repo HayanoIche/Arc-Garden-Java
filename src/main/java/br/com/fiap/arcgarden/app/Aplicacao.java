@@ -55,8 +55,15 @@ public class Aplicacao
                     if (cpf.length() == 11)
                     {
                         JOptionPane.showMessageDialog(null, "Buscando no banco. . .");
-                        usuario = urep.readByCpf(cpf);
-                        etapa = "inicio";
+
+                        Usuario user = urep.readByCpf(cpf);
+
+                        if (user != null)
+                        {
+                            usuario = user;
+                            JOptionPane.showMessageDialog(null, "Usuário encontrado e loguin efetuado!");
+                            etapa = "inicio";
+                        }
                     } else {
                         JOptionPane.showMessageDialog(null, "Erro! cpf inválido!");
                     }
@@ -88,7 +95,7 @@ public class Aplicacao
             if (etapa == "informações do usuário")
             {
                 if (usuario == null) { etapa = "inicio"; }
-                
+
                 if (usuario.getCpf() != null)
                 {
                     JOptionPane.showMessageDialog(null, usuario);

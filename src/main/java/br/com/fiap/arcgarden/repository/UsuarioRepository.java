@@ -1,5 +1,6 @@
 package br.com.fiap.arcgarden.repository;
 
+import br.com.fiap.arcgarden.model.ItemLoja;
 import br.com.fiap.arcgarden.model.Usuario;
 
 import java.sql.*;
@@ -8,17 +9,32 @@ import java.util.List;
 
 public class UsuarioRepository
 {
-    private static String SQL_INSERT = "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
-    private static String SQL_DELETE = "DELETE FROM tb_usuarios WHERE usuario_id = ?";
-    private static String SQL_SELECT_NOME = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
-    private static String SQL_SELECT_ID = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE id = ?";
-    private static String SQL_SELECT_CPF = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
+    // Códigos SQL
+    private static final String SQL_INSERT_USUARIO =
+            "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
+    private static final String SQL_INSERT_COMPRA =
+            "INSERT INTO tb_itens_comprados(data_compra, quantidade, usuario_id, item_loja_id) VALUES (SYSDATE, ?, ?, ?)";
+    private static final String SQL_DELETE_USUARIO =
+            "DELETE FROM tb_usuarios WHERE usuario_id = ?";
+    private static final String SQL_DELETE_COMPRAS =
+            "DELETE FROM tb_itens_comprados WHERE usuario_id = ?";
+    private static final String SQL_SELECT_ID =
+            "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE usuario_id = ?";
+    private static final String SQL_SELECT_NOME =
+            "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
+    private static final String SQL_SELECT_CPF =
+            "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
+    private static final String SQL_SELECT_ITENS =
+            "SELECT l.item_loja_id, l.nome, l.tipo, l.preco_agua " +
+                    "FROM tb_itens_comprados c " +
+                    "INNER JOIN tb_itens_loja l ON c.item_loja_id = l.item_loja_id " +
+                    "WHERE c.usuario_id = ?";
 
     // CREATE
-    public int create(Usuario user) throws Exception {
+    public int create(Usuario user) throws Exception
+    {
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_INSERT, new String[]{"usuario_id"})) {
-
+            PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_USUARIO, new String[]{"usuario_id"})) {
             pstmt.setString(1, user.getNome());
             pstmt.setString(2, user.getCpf());
             pstmt.setInt(3, user.getArcScore());
@@ -32,7 +48,13 @@ public class UsuarioRepository
                 }
             }
 
-            System.out.println("Usuário cadastrado no banco!");
+            if (user.getItensComprados() != null) {
+                for (ItemLoja item : user.getItensComprados()) {
+                    comprarItem(con, user.getId(), item.getId(), 1);
+                }
+            }
+
+            System.out.println("Usuário cadastrado com sucesso!");
             return registros;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,88 +62,88 @@ public class UsuarioRepository
         }
     }
 
-    // READ
-    public List<Usuario> readByName(String name) throws Exception
+    // REGISTRAR COMPRA DE ITEM
+    public void registrarCompra(int usuarioId, int itemLojaId, int quantidade) throws Exception
+    {
+        try (Connection con = ConnectionFactory.getConnection()) {
+            comprarItem(con, usuarioId, itemLojaId, quantidade);
+        }
+    }
+
+    private void comprarItem(Connection con, int usuarioId, int itemLojaId, int quantidade) throws SQLException
+    {
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_COMPRA)) {
+            pstmt.setInt(1, quantidade);
+            pstmt.setInt(2, usuarioId);
+            pstmt.setInt(3, itemLojaId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    // READ BY ID
+    public Usuario read(long id) throws Exception
     {
         try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_NOME)) {
+            PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ID)) {
 
+            pstmt.setLong(1, id);
             Usuario user = null;
-            List<Usuario> resposta = new ArrayList<>();
 
-            pstmt.setString(1, "%" + name.toLowerCase() + "%");
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next())
-            {
-                user = new Usuario();
-                user.setId(rs.getInt("usuario_id"));
-                user.setNome(rs.getString("nome"));
-                user.setCpf(rs.getString("cpf"));
-                user.setArcScore(rs.getInt("arc_score"));
-                user.setStatus(rs.getString("status"));
-                resposta.add(user);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    user = mapearUsuario(rs);
+                    user.setItensComprados(carregarItens(con, user.getId()));
+                }
             }
 
-            return resposta;
-        } catch (Exception e) {
+            return user;
+        } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         }
     }
 
+    // READ BY NAME
+    public List<Usuario> readByName(String name) throws Exception {
+        try (Connection con = ConnectionFactory.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_NOME)) {
+
+            List<Usuario> lista = new ArrayList<>();
+            pstmt.setString(1, "%" + name.toLowerCase() + "%");
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Usuario user = mapearUsuario(rs);
+                    user.setItensComprados(carregarItens(con, user.getId()));
+                    lista.add(user);
+                }
+            }
+
+            return lista;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    // READ BY CPF
     public Usuario readByCpf(String cpf) throws Exception
     {
         try (Connection con = ConnectionFactory.getConnection();
             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_CPF)) {
 
-            br.com.fiap.arcgarden.model.Usuario user = null;
-
+            Usuario user = null;
             pstmt.setString(1, "%" + cpf.toLowerCase() + "%");
-            ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                user = new br.com.fiap.arcgarden.model.Usuario();
-                user.setId(rs.getInt("usuario_id"));
-                user.setNome(rs.getString("nome"));
-                user.setCpf(rs.getString("cpf"));
-                user.setArcScore(rs.getInt("arc_score"));
-                user.setStatus(rs.getString("status"));
-            }
-
-            if (user != null) {
-                System.out.println("Usuário achado!");
-            }
-            return user;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    // READ
-    public Usuario read(long id) throws Exception
-    {
-        try (Connection con = new ConnectionFactory().getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ID)) {
-                Usuario user = new Usuario();
-                pstmt.setLong(1, id);
-
-                ResultSet rs = pstmt.executeQuery();
-
-                while(rs.next())
-                {
-                    user.setId(rs.getInt("usuario_id"));
-                    user.setNome(rs.getString("nome"));
-                    user.setCpf(rs.getString("cpf"));
-                    user.setStatus(rs.getString("status"));
-                    user.setArcScore(rs.getInt("arc_score"));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    user = mapearUsuario(rs);
+                    user.setItensComprados(carregarItens(con, user.getId()));
                 }
+            }
 
-                return user;
-        }
-        catch (SQLException e) {
+            return user;
+        } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         }
@@ -130,15 +152,49 @@ public class UsuarioRepository
     // DELETE
     public int delete(int id) throws Exception
     {
-        try (Connection con = ConnectionFactory.getConnection();
-            PreparedStatement pstmt = con.prepareStatement(SQL_DELETE)) {
+        try (Connection con = ConnectionFactory.getConnection()) {
+            try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_COMPRAS)) {
+                pstmt.setInt(1, id);
+                pstmt.executeUpdate();
+            }
 
-            pstmt.setInt(1, id);
-
-            return pstmt.executeUpdate();
+            try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_USUARIO)) {
+                pstmt.setInt(1, id);
+                return pstmt.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    // Auxiliar: Busca os itens comprados pelo usuário na associativa
+    private ArrayList<ItemLoja> carregarItens(Connection con, int usuarioId) throws SQLException {
+        ArrayList<ItemLoja> itens = new ArrayList<>();
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ITENS)) {
+            pstmt.setInt(1, usuarioId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    ItemLoja item = new ItemLoja();
+                    item.setId(rs.getInt("item_loja_id"));
+                    item.setNome(rs.getString("nome"));
+                    item.setTipo(rs.getString("tipo"));
+                    item.setPrecoAgua(rs.getBigDecimal("preco_agua"));
+                    itens.add(item);
+                }
+            }
+        }
+        return itens;
+    }
+
+    // Auxiliar: Instancia e popula a entidade Usuario
+    private Usuario mapearUsuario(ResultSet rs) throws SQLException {
+        Usuario user = new Usuario();
+        user.setId(rs.getInt("usuario_id"));
+        user.setNome(rs.getString("nome"));
+        user.setCpf(rs.getString("cpf"));
+        user.setArcScore(rs.getInt("arc_score"));
+        user.setStatus(rs.getString("status"));
+        return user;
     }
 }

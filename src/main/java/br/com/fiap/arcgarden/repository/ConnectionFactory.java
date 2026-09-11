@@ -27,8 +27,8 @@ public class ConnectionFactory
 
     // Atributos Hardcoded
     private static final String URL = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl";
-    private static final String USER = "RM571751";
-    private static final String PASS = "280508";
+    private static final String USER = "RM574069";
+    private static final String PASS = "210208";
 
     public static Connection getConnection()
     {

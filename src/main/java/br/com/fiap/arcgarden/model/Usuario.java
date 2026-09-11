@@ -2,9 +2,7 @@ package br.com.fiap.arcgarden.model;
 
 import java.util.ArrayList;
 
-public class Usuario
-{
-    // Atributos
+public class Usuario {
     private int id;
     private String nome;
     private String cpf;
@@ -12,22 +10,9 @@ public class Usuario
     private String status;
 
     private ArrayList<Missao> missoesConcluidas = new ArrayList<>();
-    private ArrayList<ItemLoja> itensComprados  = new ArrayList<>();
-
-    // ToString
-    @Override
-    public String toString() {
-        return "\nUsuario " + nome +
-                "\n   id: " + id +
-                "\n   cpf: " + cpf +
-                "\n   arcScore: " + arcScore +
-                "\n   status: " + status +
-                "\n   missoesConcluidas: " + missoesConcluidas +
-                "\n   itensComprados: " + itensComprados;
-    }
+    private ArrayList<ItemLoja> itensComprados = new ArrayList<>();
 
     // Construtores
-    // Construtor Cheio
     public Usuario(String nome, String cpf, int arcScore, String status) {
         this.nome = nome;
         this.cpf = cpf;
@@ -35,16 +20,16 @@ public class Usuario
         this.status = status;
     }
 
-    // Construtor Vazio
     public Usuario() {}
 
-    // Métodos Acessores
     // Getters
     public int getId() { return id; }
     public String getNome() { return nome; }
     public String getCpf() { return cpf; }
     public int getArcScore() { return arcScore; }
     public String getStatus() { return status; }
+    public ArrayList<ItemLoja> getItensComprados() { return itensComprados; }
+    public ArrayList<Missao> getMissoesConcluidas() { return missoesConcluidas; }
 
     // Setters
     public void setId(int id) { this.id = id; }
@@ -52,12 +37,18 @@ public class Usuario
     public void setCpf(String cpf) { this.cpf = cpf; }
     public void setArcScore(int arcScore) { this.arcScore = arcScore; }
     public void setStatus(String status) { this.status = status; }
+    public void setItensComprados(ArrayList<ItemLoja> itensComprados) { this.itensComprados = itensComprados; }
 
     // Métodos Workers
+    public void adicionarItemComprado(ItemLoja item) {
+        this.itensComprados.add(item);
+    }
 
-    // Função pra printar na tela todas as missões
-    public void mostrarMissoesConcluidas()
-    {
+    public void adicionarMissaoConcluida(Missao missao) {
+        this.missoesConcluidas.add(missao);
+    }
+
+    public void mostrarMissoesConcluidas() {
         System.out.println("\n--- Missões do Jogador: " + this.nome + " ---");
         if (missoesConcluidas.isEmpty()) {
             System.out.println("Nenhuma missão cadastrada para este jogador.");
@@ -70,7 +61,13 @@ public class Usuario
         System.out.println("---------------------------------------");
     }
 
-    public void adicionarMissaoConcluida(Missao missao) {
-        this.missoesConcluidas.add(missao);
+    @Override
+    public String toString() {
+        return "Usuario Cadastrado: " +
+                "\nNome...............: " + nome +
+                "\nCPF................: " + cpf +
+                "\nArcScore...........: " + arcScore +
+                "\nMissões Concluidas.: " + missoesConcluidas +
+                "\nItens Comprados....: " + itensComprados;
     }
 }
