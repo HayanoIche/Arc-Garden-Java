@@ -92,20 +92,110 @@ public class Aplicacao
             }
 
             // ----------------------------------------------
-            if (etapa == "informações do usuário")
+            if (etapa.equals("informações do usuário"))
             {
-                if (usuario == null) { etapa = "inicio"; }
-
-                if (usuario.getCpf() != null)
+                if (usuario == null || usuario.getCpf() == null)
                 {
-                    JOptionPane.showMessageDialog(null, usuario);
+                    JOptionPane.showMessageDialog(null, "Nenhum usuário está logado atualmente!");
                 }
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "Usuário não foi cadastrado");
+                    // Busca do banco para garantir que o usuário venha com as listas de
+                    // itensComprados e missoesConcluidas devidamente preenchidas
+                    Usuario usuarioAtualizado = urep.read(usuario.getId());
+
+                    if (usuarioAtualizado != null)
+                    {
+                        usuario = usuarioAtualizado;
+                        JOptionPane.showMessageDialog(null, usuario);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Erro ao carregar dados atualizados do usuário.");
+                    }
                 }
 
                 etapa = "inicio";
+            }
+
+            // ----------------------------------------------
+            if (etapa == "concluir missão")
+            {
+                if (usuario == null || usuario.getCpf() == null)
+                {
+                    JOptionPane.showMessageDialog(null, "Você precisa estar logado para concluir uma missão!");
+                    etapa = "inicio";
+                }
+                else
+                {
+                    String idMissaoStr = JOptionPane.showInputDialog("Digite o ID da missão a ser concluída:");
+                    String pontosStr = JOptionPane.showInputDialog("Digite a quantidade de pontos ganhos:");
+
+                    if (idMissaoStr != null && pontosStr != null)
+                    {
+                        try {
+                            int idMissao = Integer.parseInt(idMissaoStr);
+                            int pontosGanhos = Integer.parseInt(pontosStr);
+
+                            urep.concluirMissao(usuario.getId(), idMissao, pontosGanhos);
+                            JOptionPane.showMessageDialog(null, "Missão concluída com sucesso!");
+
+                            // Atualiza a instância do usuário na memória
+                            Usuario userAtualizado = urep.read(usuario.getId());
+                            if (userAtualizado != null) {
+                                usuario = userAtualizado;
+                            }
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(null, "ID ou Pontos inválidos!");
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Erro ao concluir missão: " + e.getMessage());
+                        }
+                    }
+                    etapa = "inicio";
+                }
+            }
+
+            // ----------------------------------------------
+            if (etapa == "comprar item")
+            {
+                if (usuario == null || usuario.getCpf() == null)
+                {
+                    JOptionPane.showMessageDialog(null, "Você precisa estar logado para comprar um item!");
+                    etapa = "inicio";
+                }
+                else
+                {
+                    String idItemStr = JOptionPane.showInputDialog("Digite o ID do item que deseja comprar:");
+                    String quantidadeStr = JOptionPane.showInputDialog("Digite a quantidade:");
+
+                    if (idItemStr != null && quantidadeStr != null)
+                    {
+                        try {
+                            int idItem = Integer.parseInt(idItemStr);
+                            int quantidade = Integer.parseInt(quantidadeStr);
+
+                            urep.registrarCompra(usuario.getId(), idItem, quantidade);
+                            JOptionPane.showMessageDialog(null, "Item comprado com sucesso!");
+
+                            // Atualiza a instância do usuário na memória com a nova compra
+                            Usuario userAtualizado = urep.read(usuario.getId());
+                            if (userAtualizado != null) {
+                                usuario = userAtualizado;
+                            }
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(null, "ID ou Quantidade inválida!");
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Erro ao registrar compra: " + e.getMessage());
+                        }
+                    }
+                    etapa = "inicio";
+                }
+            }
+
+            // ----------------------------------------------
+            if (etapa == "comprar item")
+            {
+                
             }
         }
     }

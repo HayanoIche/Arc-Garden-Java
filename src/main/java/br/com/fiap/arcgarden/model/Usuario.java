@@ -104,13 +104,43 @@ public class Usuario
     @Override
     public String toString()
     {
-        return "Usuario Cadastrado: " +
-                "\nID.................: " + id +
-                "\nNome...............: " + nome +
-                "\nCPF................: " + cpf +
-                "\nArcScore...........: " + arcScore +
-                "\nStatus.............: " + status +
-                "\nMissões Concluidas.: " + missoesConcluidas +
-                "\nItens Comprados....: " + itensComprados;
+        StringBuilder sb = new StringBuilder();
+        sb.append("=========================================\n");
+        sb.append("            DADOS DO JOGADOR             \n");
+        sb.append("=========================================\n");
+        sb.append("ID.................: ").append(id).append("\n");
+        sb.append("Nome...............: ").append(nome).append("\n");
+        sb.append("CPF................: ").append(cpf).append("\n");
+        sb.append("ArcScore...........: ").append(arcScore).append(" pts\n");
+        sb.append("Status.............: ").append(status).append("\n");
+
+        sb.append("\n--- ITENS COMPRADOS (").append(itensComprados.size()).append(") ---\n");
+        if (itensComprados.isEmpty()) {
+            sb.append("Nenhum item comprado.\n");
+        } else {
+            for (int i = 0; i < itensComprados.size(); i++) {
+                ItemLoja item = itensComprados.get(i);
+                sb.append(i + 1).append(". ")
+                        .append(item.getNome() != null ? item.getNome() : "Item #" + item.getId())
+                        .append(" | Tipo: ").append(item.getTipo())
+                        .append(" | Preço: ").append(item.getPrecoAgua()).append(" Águas\n");
+            }
+        }
+
+        sb.append("\n--- MISSÕES CONCLUÍDAS (").append(missoesConcluidas.size()).append(") ---\n");
+        if (missoesConcluidas.isEmpty()) {
+            sb.append("Nenhuma missão concluída.\n");
+        } else {
+            for (int i = 0; i < missoesConcluidas.size(); i++) {
+                Missao m = missoesConcluidas.get(i);
+                sb.append(i + 1).append(". ")
+                        .append(m.getNome() != null ? m.getNome() : "Missão #" + m.getId())
+                        .append(" [").append(m.getDificuldade()).append("]")
+                        .append(" - Concluída em: ").append(m.getDataDeConclusao()).append("\n");
+            }
+        }
+        sb.append("=========================================");
+
+        return sb.toString();
     }
 }
