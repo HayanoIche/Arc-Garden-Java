@@ -12,7 +12,7 @@ public class Menu
 {
     private int opcaoSelecionada = -1;
 
-    public int exibirEObterEscolha()
+    public int exibirMenuInicial()
     {
         opcaoSelecionada = -1;
 
@@ -49,7 +49,7 @@ public class Menu
         JOptionPane.showOptionDialog(
                 null,
                 painel,
-                "Arc Garden - Menu",
+                "Arc Garden",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.PLAIN_MESSAGE,
                 null,

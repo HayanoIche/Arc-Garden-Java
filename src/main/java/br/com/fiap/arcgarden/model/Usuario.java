@@ -105,10 +105,9 @@ public class Usuario
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("=========================================\n");
+        sb.append("-----------------------------------------\n");
         sb.append("            DADOS DO JOGADOR             \n");
-        sb.append("=========================================\n");
-        sb.append("ID.................: ").append(id).append("\n");
+        sb.append("-----------------------------------------\n");
         sb.append("Nome...............: ").append(nome).append("\n");
         sb.append("CPF................: ").append(cpf).append("\n");
         sb.append("ArcScore...........: ").append(arcScore).append(" pts\n");

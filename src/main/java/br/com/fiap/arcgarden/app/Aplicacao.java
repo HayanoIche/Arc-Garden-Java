@@ -32,7 +32,7 @@ public class Aplicacao
             // ----------------------------------------------
             if (etapa == "inicio")
             {
-                int resposta = menu.exibirEObterEscolha();
+                int resposta = menu.exibirMenuInicial();
 
                 switch (resposta)
                 {
@@ -53,21 +53,23 @@ public class Aplicacao
             // ----------------------------------------------
             if (etapa == "logar usuario")
             {
-                String cpf = JOptionPane.showInputDialog("Digite seu CPF (XXX.XXX.XXX-XX):");
+                String cpf = JOptionPane.showInputDialog(null, "Digite seu CPF (XXX.XXX.XXX-XX):", "Login do usuário", JOptionPane.QUESTION_MESSAGE);
 
                 if (cpf != null)
                 {
                     if (cpf.length() == 14)
                     {
-                        JOptionPane.showMessageDialog(null, "Buscando no banco. . .");
-
                         Usuario user = urep.readByCpf(cpf);
 
                         if (user != null)
                         {
                             usuario = user;
-                            JOptionPane.showMessageDialog(null, "Usuário encontrado e loguin efetuado!");
+                            JOptionPane.showMessageDialog(null, "Usuário encontrado e login efetuado!");
                             etapa = "inicio";
+                        }
+                        else
+                        {
+                            JOptionPane.showMessageDialog(null, "Usuário não encontrado");
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Erro! cpf inválido!");
@@ -171,7 +173,16 @@ public class Aplicacao
                 else
                 {
                     String idItemStr = JOptionPane.showInputDialog("Digite o ID do item que deseja comprar:");
+                    if (idItemStr == null) { etapa = "inicio"; continue; }
+                    else {
+                        if (idItemStr.strip().isEmpty()) { etapa = "inicio"; continue; }
+                    }
+
                     String quantidadeStr = JOptionPane.showInputDialog("Digite a quantidade:");
+                    if (quantidadeStr == null) { etapa = "inicio"; continue; }
+                    else {
+                        if (quantidadeStr.strip().isEmpty()) { etapa = "inicio"; continue; }
+                    }
 
                     if (idItemStr != null && quantidadeStr != null)
                     {
@@ -205,7 +216,7 @@ public class Aplicacao
                 if (planta != null)
                 {
                     prep.create(planta);
-                    JOptionPane.showMessageDialog(null, "Planta cadastrada com sucesso!");
+                    JOptionPane.showMessageDialog(null, "Planta cadastrada com sucesso!\nID da planta: " + planta.getId());
                     etapa = "inicio";
                 }
                 else
@@ -223,7 +234,7 @@ public class Aplicacao
                 if (missao != null)
                 {
                     mrep.create(missao);
-                    JOptionPane.showMessageDialog(null, "Missão cadastrada com sucesso!");
+                    JOptionPane.showMessageDialog(null, "Missão cadastrada com sucesso!\nID da missão: " + missao.getId());
                     etapa = "inicio";
                 }
                 else

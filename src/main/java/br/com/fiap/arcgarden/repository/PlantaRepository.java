@@ -1,33 +1,11 @@
 package br.com.fiap.arcgarden.repository;
 
-import br.com.fiap.arcgarden.model.ItemLoja;
-import br.com.fiap.arcgarden.model.Missao;
 import br.com.fiap.arcgarden.model.Planta;
-import br.com.fiap.arcgarden.model.Usuario;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-
-CREATE TABLE tb_tipo_plantas (
-     tipo_id INTEGER GENERATED ALWAYS AS IDENTITY,
-     nome VARCHAR2(120) NOT NULL,
-     categoria VARCHAR2(20) NOT NULL,
-     xp_maximo INTEGER NOT NULL,
-     descricao VARCHAR2(500) NOT NULL,
-
-     CONSTRAINT tb_tipo_plantas_pk PRIMARY KEY (tipo_id),
-
-     CONSTRAINT tb_tipo_plantas_ck
-         CHECK (
-             categoria IN ('AGUA', 'ENERGIA', 'RENOVACAO', 'NATUREZA')
-                 AND xp_maximo > 0
-             )
-);
-
- */
 
 public class PlantaRepository
 {

@@ -1,7 +1,6 @@
 package br.com.fiap.arcgarden.repository;
 
 import br.com.fiap.arcgarden.model.Missao;
-import br.com.fiap.arcgarden.model.Planta;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -11,34 +11,25 @@ import java.util.List;
 public class UsuarioRepository
 {
     // Códigos SQL
-    private static final String SQL_INSERT_USUARIO =
-            "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
-    private static final String SQL_INSERT_COMPRA =
-            "INSERT INTO tb_itens_comprados(data_compra, quantidade, usuario_id, item_loja_id) VALUES (SYSDATE, ?, ?, ?)";
-    private static final String SQL_INSERT_MISSAO_CONCLUIDA =
-            "INSERT INTO tb_missoes_concluidas(missao_id, usuario_id, data_conclusao, pontos_ganhos) VALUES (?, ?, SYSDATE, ?)";
+    private static final String SQL_INSERT_USUARIO = "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
+    private static final String SQL_INSERT_COMPRA = "INSERT INTO tb_itens_comprados(data_compra, quantidade, usuario_id, item_loja_id) VALUES (SYSDATE, ?, ?, ?)";
+    private static final String SQL_INSERT_MISSAO_CONCLUIDA = "INSERT INTO tb_missoes_concluidas(missao_id, usuario_id, data_conclusao, pontos_ganhos) VALUES (?, ?, SYSDATE, ?)";
 
-    private static final String SQL_DELETE_USUARIO =
-            "DELETE FROM tb_usuarios WHERE usuario_id = ?";
-    private static final String SQL_DELETE_COMPRAS =
-            "DELETE FROM tb_itens_comprados WHERE usuario_id = ?";
-    private static final String SQL_DELETE_MISSOES_CONCLUIDAS =
-            "DELETE FROM tb_missoes_concluidas WHERE usuario_id = ?";
+    private static final String SQL_DELETE_USUARIO = "DELETE FROM tb_usuarios WHERE usuario_id = ?";
+    private static final String SQL_DELETE_COMPRAS = "DELETE FROM tb_itens_comprados WHERE usuario_id = ?";
+    private static final String SQL_DELETE_MISSOES_CONCLUIDAS = "DELETE FROM tb_missoes_concluidas WHERE usuario_id = ?";
 
-    private static final String SQL_SELECT_ID =
-            "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE usuario_id = ?";
-    private static final String SQL_SELECT_NOME =
-            "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
-    private static final String SQL_SELECT_CPF =
-            "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
+    private static final String SQL_SELECT_ID = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE usuario_id = ?";
+    private static final String SQL_SELECT_NOME = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
+    private static final String SQL_SELECT_CPF = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
 
     private static final String SQL_SELECT_ITENS =
-            "SELECT l.item_loja_id, l.nome, l.tipo, l.preco_agua " +
+                    "SELECT l.item_loja_id, l.nome, l.tipo, l.preco_agua " +
                     "FROM tb_itens_comprados c " +
                     "INNER JOIN tb_itens_loja l ON c.item_loja_id = l.item_loja_id " +
                     "WHERE c.usuario_id = ?";
     private static final String SQL_SELECT_MISSOES =
-            "SELECT m.missao_id, m.nome, m.descricao, m.dificuldade, m.vezes, m.recompensa_pontos, mc.data_conclusao " +
+                    "SELECT m.missao_id, m.nome, m.descricao, m.dificuldade, m.vezes, m.recompensa_pontos, mc.data_conclusao " +
                     "FROM tb_missoes_concluidas mc " +
                     "INNER JOIN tb_missoes m ON mc.missao_id = m.missao_id " +
                     "WHERE mc.usuario_id = ?";
