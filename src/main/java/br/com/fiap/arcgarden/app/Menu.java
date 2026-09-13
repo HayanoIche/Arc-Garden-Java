@@ -279,6 +279,12 @@ public class Menu
 
                 try {
                     valor5 = Integer.parseInt(campo5.getText());
+
+                    if (valor5 < 0 || valor5 > 100)
+                    {
+                        JOptionPane.showMessageDialog(null, "Erro no cadastro! Valor inválido nos pontos");
+                        continue;
+                    }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Erro no cadastro! Recompensa em pontos não numerico");
                     continue;
