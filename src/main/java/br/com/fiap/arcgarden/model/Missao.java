@@ -1,20 +1,18 @@
 package br.com.fiap.arcgarden.model;
 
-import java.time.LocalDate;
-
 public class Missao
 {
     private int id;
     private String nome;
     private String descricao;
-    private String dificuldade; // 'F', 'M', 'D'
+    private String dificuldade;
     private int vezes;
     private int recompensaPontos;
-    private LocalDate dataDeConclusao; // Campo auxiliar para quando a missão estiver na lista do jogador
 
     public Missao() {}
 
-    public Missao(String nome, String descricao, String dificuldade, int vezes, int recompensaPontos) {
+    public Missao(String nome, String descricao, String dificuldade, int vezes, int recompensaPontos)
+    {
         this.nome = nome;
         this.descricao = descricao;
         this.dificuldade = dificuldade;
@@ -38,9 +36,6 @@ public class Missao
 
     public int getRecompensaPontos() { return recompensaPontos; }
     public void setRecompensaPontos(int recompensaPontos) { this.recompensaPontos = recompensaPontos; }
-
-    public LocalDate getDataDeConclusao() { return dataDeConclusao; }
-    public void setDataDeConclusao(LocalDate dataDeConclusao) { this.dataDeConclusao = dataDeConclusao; }
 
     @Override
     public String toString() {
