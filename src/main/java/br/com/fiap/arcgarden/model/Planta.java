@@ -2,34 +2,42 @@ package br.com.fiap.arcgarden.model;
 
 public class Planta
 {
+    // Atributos
     private int id;
-    private String nome;
-    private String categoria;
-    private int xpMaximo;
-    private String descricao;
+    private int jardimId;
+    private TipoPlanta tipoPlanta;
+    private String raridade;
+    private String nivelPlanta;
+    private String premiada;
+    private int xpAtual;
 
     // Construtores
-    public Planta(String nome, String categoria, int xpMaximo, String descricao)
-    {
-        this.nome = nome;
-        this.categoria = categoria;
-        this.xpMaximo = xpMaximo;
-        this.descricao = descricao;
-    }
-
     public Planta() {}
 
-    // Getters
-    public int getId() { return id; }
-    public String getNome() { return nome; }
-    public String getCategoria() { return categoria; }
-    public int getXpMaximo() { return xpMaximo; }
-    public String getDescricao() { return descricao; }
+    public Planta(int id, int jardimId, TipoPlanta tipoPlanta, String raridade, String nivelPlanta, String premiada, int xpAtual) {
+        this.id = id;
+        this.jardimId = jardimId;
+        this.tipoPlanta = tipoPlanta;
+        this.raridade = raridade;
+        this.nivelPlanta = nivelPlanta;
+        this.premiada = premiada;
+        this.xpAtual = xpAtual;
+    }
 
-    // Setters
+    // Acessores
+    public int getId() { return id; }
+    public int getJardimId() { return jardimId; }
+    public TipoPlanta getTipoPlanta() { return tipoPlanta; }
+    public String getRaridade() { return raridade; }
+    public String getNivelPlanta() { return nivelPlanta; }
+    public String getPremiada() { return premiada; }
+    public int getXpAtual() { return xpAtual; }
+
     public void setId(int id) { this.id = id; }
-    public void setNome(String nome) { this.nome = nome; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
-    public void setXpMaximo(int xp_maximo) { this.xpMaximo = xp_maximo; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setJardimId(int jardimId) { this.jardimId = jardimId; }
+    public void setTipoPlanta(TipoPlanta tipoPlanta) { this.tipoPlanta = tipoPlanta; }
+    public void setRaridade(String raridade) { this.raridade = raridade; }
+    public void setNivelPlanta(String nivelPlanta) { this.nivelPlanta = nivelPlanta; }
+    public void setPremiada(String premiada) { this.premiada = premiada; }
+    public void setXpAtual(int xpAtual) { this.xpAtual = xpAtual; }
 }
