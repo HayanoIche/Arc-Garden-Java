@@ -1,108 +1,65 @@
 package br.com.fiap.arcgarden.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Usuario
 {
+    // Atributos
     private int id;
     private String nome;
     private String cpf;
     private int arcScore;
     private String status;
+    private String email;
+    private String senha;
 
-    private ArrayList<MissaoConcluida> missoesConcluidas = new ArrayList<>();
-    private ArrayList<ItemLoja> itensComprados = new ArrayList<>();
+    private List<ItemComprado> itensComprados = new ArrayList<>();
+    private List<MissaoConcluida> missoesConcluidas = new ArrayList<>();
 
     // Construtores
-    public Usuario(String nome, String cpf, int arcScore, String status)
-    {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.arcScore = arcScore;
-        this.status = status;
-    }
+    public Usuario() {}
 
-    public Usuario(int id, String nome, String cpf, int arcScore, String status)
-    {
+    public Usuario(int id, String nome, String cpf, Integer arcScore, String status, String email, String senha) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.arcScore = arcScore;
         this.status = status;
+        this.email = email;
+        this.senha = senha;
     }
 
-    public Usuario() {}
-
-    // Métodos Acessores
-    // Getters
+    // Acessores
     public int getId() { return id; }
     public String getNome() { return nome; }
     public String getCpf() { return cpf; }
-    public int getArcScore() { return arcScore; }
+    public Integer getArcScore() { return arcScore; }
     public String getStatus() { return status; }
-    public ArrayList<MissaoConcluida> getMissoesConcluidas() { return missoesConcluidas; }
-    public ArrayList<ItemLoja> getItensComprados() { return itensComprados; }
+    public String getEmail() { return email; }
+    public String getSenha() { return senha; }
+    public List<ItemComprado> getItensComprados() { return itensComprados; }
+    public List<MissaoConcluida> getMissoesConcluidas() { return missoesConcluidas; }
 
-    // Setters
     public void setId(int id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
     public void setCpf(String cpf) { this.cpf = cpf; }
-    public void setArcScore(int arcScore) { this.arcScore = arcScore; }
+    public void setArcScore(Integer arcScore) { this.arcScore = arcScore; }
     public void setStatus(String status) { this.status = status; }
-    public void setMissoesConcluidas(ArrayList<MissaoConcluida> missoesConcluidas) { this.missoesConcluidas = missoesConcluidas; }
-    public void setItensComprados(ArrayList<ItemLoja> itensComprados) { this.itensComprados = itensComprados; }
+    public void setEmail(String email) { this.email = email; }
+    public void setSenha(String senha) { this.senha = senha; }
+    public void setItensComprados(List<ItemComprado> itensComprados) { this.itensComprados = itensComprados; }
+    public void setMissoesConcluidas(List<MissaoConcluida> missoesConcluidas) { this.missoesConcluidas = missoesConcluidas; }
 
-    // Métodos Workers
-    public void adicionarMissaoConcluida(MissaoConcluida missao)
+    public void adicionarItemComprado(ItemComprado item)
     {
-        this.missoesConcluidas.add(missao);
-    }
-
-    public void adicionarItemComprado(ItemLoja item)
-    {
+        if (this.itensComprados == null) { this.itensComprados = new ArrayList<>(); }
         this.itensComprados.add(item);
     }
 
-    // ToString
-    @Override
-    public String toString()
+    public void adicionarMissaoConcluida(MissaoConcluida missaoConcluida)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append("-----------------------------------------\n");
-        sb.append("            DADOS DO JOGADOR             \n");
-        sb.append("-----------------------------------------\n");
-        sb.append("Nome...............: ").append(nome).append("\n");
-        sb.append("CPF................: ").append(cpf).append("\n");
-        sb.append("ArcScore...........: ").append(arcScore).append(" pts\n");
-        sb.append("Status.............: ").append(status).append("\n");
-
-        sb.append("\n--- ITENS COMPRADOS (").append(itensComprados.size()).append(") ---\n");
-        if (itensComprados.isEmpty()) {
-            sb.append("Nenhum item comprado.\n");
-        } else {
-            for (int i = 0; i < itensComprados.size(); i++) {
-                ItemLoja item = itensComprados.get(i);
-                sb.append(i + 1).append(". ")
-                        .append(item.getNome() != null ? item.getNome() : "Item #" + item.getId())
-                        .append(" | Tipo: ").append(item.getTipo())
-                        .append(" | Preço: ").append(item.getPrecoAgua()).append(" Águas\n");
-            }
-        }
-
-        sb.append("\n--- MISSÕES CONCLUÍDAS (").append(missoesConcluidas.size()).append(") ---\n");
-        if (missoesConcluidas.isEmpty()) {
-            sb.append("Nenhuma missão concluída.\n");
-        } else {
-            for (int i = 0; i < missoesConcluidas.size(); i++) {
-                MissaoConcluida m = missoesConcluidas.get(i);
-                sb.append(i + 1).append(". ")
-                        .append(m.getNome() != null ? m.getNome() : "Missão #" + m.getId())
-                        .append(" [").append(m.getDificuldade()).append("]")
-                        .append(" - Concluída em: ").append(m.getDataDeConclusao()).append("\n");
-            }
-        }
-        sb.append("=========================================");
-
-        return sb.toString();
+        if (this.missoesConcluidas == null) { this.missoesConcluidas = new ArrayList<>(); }
+        this.missoesConcluidas.add(missaoConcluida);
     }
 }
