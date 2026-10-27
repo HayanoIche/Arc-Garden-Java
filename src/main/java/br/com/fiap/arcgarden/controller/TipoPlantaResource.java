@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tipos-plantas")
-@CrossOrigin(origins = "*")
 public class TipoPlantaResource
 {
     private final TipoPlantaService service;

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/missoes")
-@CrossOrigin(origins = "*")
 public class MissaoResource {
 
     private final MissaoService service;

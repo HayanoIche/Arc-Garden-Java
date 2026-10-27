@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/jardins")
-@CrossOrigin(origins = "*")
 public class JardimResource
 {
     private final JardimService service;
