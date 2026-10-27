@@ -12,9 +12,11 @@ import java.util.List;
 @Repository
 public class TipoPlantaRepository
 {
+    // --------------- DATA SOURCE ---------------
     private final DataSource dataSource;
     public TipoPlantaRepository(DataSource dataSource) { this.dataSource = dataSource; }
 
+    // --------------- CÓDIGOS SQL ---------------
     private static final String SQL_INSERT = "INSERT INTO tb_tipo_plantas(nome, categoria, xp_maximo, descricao) VALUES (?, ?, ?, ?)";
     private static final String SQL_SELECT_ALL = "SELECT tipo_id, nome, categoria, xp_maximo, descricao FROM tb_tipo_plantas ORDER BY tipo_id";
     private static final String SQL_SELECT_ID = "SELECT tipo_id, nome, categoria, xp_maximo, descricao FROM tb_tipo_plantas WHERE tipo_id = ?";
@@ -22,7 +24,9 @@ public class TipoPlantaRepository
     private static final String SQL_UPDATE = "UPDATE tb_tipo_plantas SET nome = ?, categoria = ?, xp_maximo = ?, descricao = ? WHERE tipo_id = ?";
     private static final String SQL_DELETE = "DELETE FROM tb_tipo_plantas WHERE tipo_id = ?";
 
-    public void create(TipoPlanta tipo) {
+    // --------------- CREATE ---------------
+    public void create(TipoPlanta tipo)
+    {
         Connection con = DataSourceUtils.getConnection(dataSource);
         try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT, new String[]{"tipo_id"})) {
             pstmt.setString(1, tipo.getNome());
@@ -43,6 +47,8 @@ public class TipoPlantaRepository
         }
     }
 
+
+    // --------------- READ ---------------
     public List<TipoPlanta> readAll() {
         List<TipoPlanta> lista = new ArrayList<>();
         Connection con = DataSourceUtils.getConnection(dataSource);
@@ -58,6 +64,7 @@ public class TipoPlantaRepository
         }
         return lista;
     }
+
 
     public TipoPlanta read(int id) {
         Connection con = DataSourceUtils.getConnection(dataSource);
@@ -75,6 +82,7 @@ public class TipoPlantaRepository
         }
         return null;
     }
+
 
     public List<TipoPlanta> readByCategoria(String categoria) {
         List<TipoPlanta> lista = new ArrayList<>();
@@ -94,6 +102,7 @@ public class TipoPlantaRepository
         return lista;
     }
 
+    // --------------- UPDATE ---------------
     public void update(TipoPlanta tipo) {
         Connection con = DataSourceUtils.getConnection(dataSource);
         try (PreparedStatement pstmt = con.prepareStatement(SQL_UPDATE)) {
@@ -110,6 +119,8 @@ public class TipoPlantaRepository
         }
     }
 
+
+    // --------------- DELETE ---------------
     public void delete(int id) {
         Connection con = DataSourceUtils.getConnection(dataSource);
         try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE)) {
