@@ -21,7 +21,7 @@ public class Missao
         this.vezes = vezes;
         this.recompensaPontos = recompensaPontos;
     }
-
+    
     // Acessores
     public int getId() { return id; }
     public String getNome() { return nome; }
