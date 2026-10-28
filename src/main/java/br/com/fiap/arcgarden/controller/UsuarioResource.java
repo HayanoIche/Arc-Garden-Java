@@ -3,16 +3,18 @@ package br.com.fiap.arcgarden.controller;
 import br.com.fiap.arcgarden.controller.dto.UsuarioMapper;
 import br.com.fiap.arcgarden.controller.dto.UsuarioRequestDto;
 import br.com.fiap.arcgarden.controller.dto.UsuarioResponseDto;
+import br.com.fiap.arcgarden.exceptions.ErrorResponse;
 import br.com.fiap.arcgarden.model.Usuario;
 import br.com.fiap.arcgarden.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("api/v1/usuarios")
 public class UsuarioResource
 {
     private final UsuarioService service;
@@ -27,30 +29,57 @@ public class UsuarioResource
             UsuarioResponseDto responseDto = UsuarioMapper.toResponseDto(usuarioSalvo);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/usuarios"
+            );
+
+            return ResponseEntity.status(status).body(error);
         }
     }
 
     @PostMapping("/{usuarioId}/missoes/{missaoId}")
-    public ResponseEntity<Object> concluirMissao(@PathVariable int usuarioId, @PathVariable int missaoId) {
+    public ResponseEntity<Object> concluirMissao(@PathVariable int usuarioId, @PathVariable int missaoId)
+    {
         try {
             service.concluirMissao(usuarioId, missaoId);
             return ResponseEntity.status(HttpStatus.CREATED).body("Missão concluída com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/usuarios/{usuarioId}/missoes/{missaoId}"
+            );
+
+            return ResponseEntity.status(status).body(error);
         }
     }
 
     @PostMapping("/{usuarioId}/itens/{itemId}")
-    public ResponseEntity<Object> comprarItem(@PathVariable int usuarioId,
-                                              @PathVariable int itemId,
-                                              @RequestParam(defaultValue = "1") int quantidade) {
+    public ResponseEntity<Object> comprarItem(@PathVariable int usuarioId, @PathVariable int itemId, @RequestParam(defaultValue = "1") int quantidade)
+    {
         try {
             service.comprarItem(usuarioId, itemId, quantidade);
             return ResponseEntity.status(HttpStatus.CREATED).body("Item comprado com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/usuarios/{usuarioId}/itens/{itemId}"
+            );
+
+            return ResponseEntity.status(status).body(error);
         }
     }
 
@@ -62,8 +91,17 @@ public class UsuarioResource
                     .map(UsuarioMapper::toResponseDto)
                     .toList();
             return ResponseEntity.ok(dtos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/usuarios"
+            );
+
+            return ResponseEntity.status(status).body(error);
         }
     }
 
@@ -76,8 +114,17 @@ public class UsuarioResource
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(UsuarioMapper.toResponseDto(usuario));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "/{id}"
+            );
+
+            return ResponseEntity.status(status).body(error);
         }
     }
 
@@ -86,9 +133,18 @@ public class UsuarioResource
         try {
             Usuario usuario = UsuarioMapper.toModel(requestDto);
             service.atualizar(id, usuario);
-            return ResponseEntity.noContent().build(); // Retorna 204 No Content após atualizar com sucesso
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.noContent().build(); // 204
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "/{id}"
+            );
+
+            return ResponseEntity.status(status).body(error);
         }
     }
 }
