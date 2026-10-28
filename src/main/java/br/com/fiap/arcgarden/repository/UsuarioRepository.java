@@ -1,50 +1,65 @@
 package br.com.fiap.arcgarden.repository;
 
+import br.com.fiap.arcgarden.model.ItemComprado;
 import br.com.fiap.arcgarden.model.ItemLoja;
 import br.com.fiap.arcgarden.model.Missao;
+import br.com.fiap.arcgarden.model.MissaoConcluida;
 import br.com.fiap.arcgarden.model.Usuario;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class UsuarioRepository
 {
-    // Códigos SQL
-    private static final String SQL_INSERT_USUARIO = "INSERT INTO tb_usuarios(nome, cpf, arc_score, status) VALUES (?, ?, ?, ?)";
+    // --------------- DATA SOURCE ---------------
+    private final DataSource dataSource;
+    public UsuarioRepository(DataSource dataSource) { this.dataSource = dataSource; }
+
+
+    // --------------- CÓDIGOS SQL ---------------
+    private static final String SQL_INSERT_USUARIO = "INSERT INTO tb_usuarios(nome, cpf, arc_score, status, email, senha) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String SQL_INSERT_COMPRA = "INSERT INTO tb_itens_comprados(data_compra, quantidade, usuario_id, item_loja_id) VALUES (SYSDATE, ?, ?, ?)";
-    private static final String SQL_INSERT_MISSAO_CONCLUIDA = "INSERT INTO tb_missoes_concluidas(missao_id, usuario_id, data_conclusao, pontos_ganhos) VALUES (?, ?, SYSDATE, ?)";
+    private static final String SQL_INSERT_MISSAO_CONCLUIDA = "INSERT INTO tb_missoes_concluidas(missao_id, usuario_id, data_conclusao) VALUES (?, ?, SYSDATE)";
 
-    private static final String SQL_DELETE_USUARIO = "DELETE FROM tb_usuarios WHERE usuario_id = ?";
-    private static final String SQL_DELETE_COMPRAS = "DELETE FROM tb_itens_comprados WHERE usuario_id = ?";
-    private static final String SQL_DELETE_MISSOES_CONCLUIDAS = "DELETE FROM tb_missoes_concluidas WHERE usuario_id = ?";
-
-    private static final String SQL_SELECT_ID = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE usuario_id = ?";
-    private static final String SQL_SELECT_NOME = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
-    private static final String SQL_SELECT_CPF = "SELECT usuario_id, nome, cpf, arc_score, status FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
+    private static final String SQL_SELECT_ALL = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios ORDER BY usuario_id";
+    private static final String SQL_SELECT_ID = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios WHERE usuario_id = ?";
+    private static final String SQL_SELECT_NOME = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
+    private static final String SQL_SELECT_CPF = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
 
     private static final String SQL_SELECT_ITENS =
-                    "SELECT l.item_loja_id, l.nome, l.tipo, l.preco_agua " +
+            "SELECT c.item_comprado_id, c.data_compra, c.quantidade, " +
+                    "l.item_loja_id, l.nome, l.tipo, l.preco_agua, l.loja_id " +
                     "FROM tb_itens_comprados c " +
                     "INNER JOIN tb_itens_loja l ON c.item_loja_id = l.item_loja_id " +
                     "WHERE c.usuario_id = ?";
-    private static final String SQL_SELECT_MISSOES =
-                    "SELECT m.missao_id, m.nome, m.descricao, m.dificuldade, m.vezes, m.recompensa_pontos, mc.data_conclusao " +
+
+    private static final String SQL_SELECT_MISSOES_CONCLUIDAS =
+            "SELECT mc.missao_concluida_id, mc.data_conclusao, " +
+                    "m.missao_id, m.nome, m.descricao, m.dificuldade, m.vezes, m.recompensa_pontos " +
                     "FROM tb_missoes_concluidas mc " +
                     "INNER JOIN tb_missoes m ON mc.missao_id = m.missao_id " +
                     "WHERE mc.usuario_id = ?";
 
-    // CREATE
-    public int create(Usuario user) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_USUARIO, new String[]{"usuario_id"})) {
+    private static final String SQL_UPDATE_USUARIO = "UPDATE tb_usuarios SET nome = ?, cpf = ?, arc_score = ?, status = ?, email = ?, senha = ? WHERE usuario_id = ?";
+
+
+    // --------------- CREATE ---------------
+    public void create(Usuario user) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_USUARIO, new String[]{"usuario_id"})) {
             pstmt.setString(1, user.getNome());
             pstmt.setString(2, user.getCpf());
             pstmt.setInt(3, user.getArcScore());
             pstmt.setString(4, user.getStatus());
+            pstmt.setString(5, user.getEmail());
+            pstmt.setString(6, user.getSenha());
 
-            int registros = pstmt.executeUpdate();
+            pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -53,35 +68,161 @@ public class UsuarioRepository
             }
 
             if (user.getItensComprados() != null) {
-                for (ItemLoja item : user.getItensComprados()) {
-                    comprarItem(con, user.getId(), item.getId(), 1);
+                for (ItemComprado compra : user.getItensComprados()) {
+                    comprarItem(con, user.getId(), compra.getItemLoja().getId(), compra.getQuantidade());
                 }
             }
 
             if (user.getMissoesConcluidas() != null) {
-                for (Missao missao : user.getMissoesConcluidas()) {
-                    concluirMissao(con, user.getId(), missao.getId(), missao.getRecompensaPontos());
+                for (MissaoConcluida mc : user.getMissoesConcluidas()) {
+                    concluirMissao(con, user.getId(), mc.getMissao().getId());
                 }
             }
-
-            System.out.println("Usuário cadastrado com sucesso!");
-            return registros;
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
+            throw new RuntimeException("Erro ao inserir usuário", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
-    // REGISTRAR COMPRA DE ITEM
-    public void registrarCompra(int usuarioId, int itemLojaId, int quantidade) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection()) {
-            comprarItem(con, usuarioId, itemLojaId, quantidade);
+
+    public void inserirMissaoConcluida(int usuarioId, int missaoId) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_MISSAO_CONCLUIDA)) {
+            pstmt.setLong(1, missaoId);
+            pstmt.setLong(2, usuarioId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao registrar missão concluída: " + e.getMessage(), e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
-    private void comprarItem(Connection con, int usuarioId, int itemLojaId, int quantidade) throws SQLException
+
+    public void inserirItemComprado(int usuarioId, int itemId, int quantidade) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_COMPRA)) {
+            pstmt.setInt(1, quantidade);
+            pstmt.setLong(2, usuarioId);
+            pstmt.setLong(3, itemId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao registrar compra de item: " + e.getMessage(), e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+    }
+
+
+    // --------------- READ ---------------
+    public List<Usuario> readAll()
     {
+        List<Usuario> lista = new ArrayList<>();
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ALL);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Usuario user = mapearUsuario(rs);
+                user.setItensComprados(carregarItens(con, user.getId()));
+                user.setMissoesConcluidas(carregarMissoesConcluidas(con, user.getId()));
+                lista.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar usuários", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+        return lista;
+    }
+
+
+    public Usuario read(int id) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ID)) {
+            pstmt.setLong(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Usuario user = mapearUsuario(rs);
+                    user.setItensComprados(carregarItens(con, user.getId()));
+                    user.setMissoesConcluidas(carregarMissoesConcluidas(con, user.getId()));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar usuário por ID", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+        return null;
+    }
+
+
+    public List<Usuario> readByName(String name) {
+        List<Usuario> lista = new ArrayList<>();
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_NOME)) {
+            pstmt.setString(1, "%" + name.toLowerCase() + "%");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Usuario user = mapearUsuario(rs);
+                    user.setItensComprados(carregarItens(con, user.getId()));
+                    user.setMissoesConcluidas(carregarMissoesConcluidas(con, user.getId()));
+                    lista.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar usuários por nome", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+        return lista;
+    }
+
+
+    public Usuario readByCpf(String cpf) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_CPF)) {
+            pstmt.setString(1, "%" + cpf.toLowerCase() + "%");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Usuario user = mapearUsuario(rs);
+                    user.setItensComprados(carregarItens(con, user.getId()));
+                    user.setMissoesConcluidas(carregarMissoesConcluidas(con, user.getId()));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar usuário por CPF", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+        return null;
+    }
+
+
+    // --------------- UPDATE ---------------
+    public void update(Usuario user) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_UPDATE_USUARIO)) {
+            pstmt.setString(1, user.getNome());
+            pstmt.setString(2, user.getCpf());
+            pstmt.setInt(3, user.getArcScore());
+            pstmt.setString(4, user.getStatus());
+            pstmt.setString(5, user.getEmail());
+            pstmt.setString(6, user.getSenha());
+            pstmt.setLong(7, user.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar usuário", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+    }
+
+
+    private void comprarItem(Connection con, int usuarioId, int itemLojaId, int quantidade) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_COMPRA)) {
             pstmt.setInt(1, quantidade);
             pstmt.setInt(2, usuarioId);
@@ -90,178 +231,86 @@ public class UsuarioRepository
         }
     }
 
-    // REGISTRAR MISSÃO CONCLUÍDA
-    public void concluirMissao(int usuarioId, int missaoId, int pontosGanhos) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection()) {
-            concluirMissao(con, usuarioId, missaoId, pontosGanhos);
-        }
-    }
 
-    private void concluirMissao(Connection con, int usuarioId, int missaoId, int pontosGanhos) throws SQLException
-    {
+    private void concluirMissao(Connection con, int usuarioId, int missaoId) throws SQLException {
         try (PreparedStatement pstmt = con.prepareStatement(SQL_INSERT_MISSAO_CONCLUIDA)) {
             pstmt.setInt(1, missaoId);
             pstmt.setInt(2, usuarioId);
-            pstmt.setInt(3, pontosGanhos);
             pstmt.executeUpdate();
         }
     }
 
-    // READ BY ID
-    public Usuario read(long id) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ID)) {
 
-            pstmt.setLong(1, id);
-            Usuario user = null;
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    user = mapearUsuario(rs);
-                    user.setItensComprados(carregarItens(con, user.getId()));
-                    user.setMissoesConcluidas(carregarMissoes(con, user.getId()));
-                }
-            }
-
-            return user;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    // READ BY NAME
-    public List<Usuario> readByName(String name) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_NOME)) {
-
-            List<Usuario> lista = new ArrayList<>();
-            pstmt.setString(1, "%" + name.toLowerCase() + "%");
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Usuario user = mapearUsuario(rs);
-                    user.setItensComprados(carregarItens(con, user.getId()));
-                    user.setMissoesConcluidas(carregarMissoes(con, user.getId()));
-                    lista.add(user);
-                }
-            }
-
-            return lista;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    // READ BY CPF
-    public Usuario readByCpf(String cpf) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_CPF)) {
-
-            Usuario user = null;
-            pstmt.setString(1, "%" + cpf.toLowerCase() + "%");
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    user = mapearUsuario(rs);
-                    user.setItensComprados(carregarItens(con, user.getId()));
-                    user.setMissoesConcluidas(carregarMissoes(con, user.getId()));
-                }
-            }
-
-            return user;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    // DELETE
-    public int delete(int id) throws Exception
-    {
-        try (Connection con = ConnectionFactory.getConnection()) {
-            try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_COMPRAS)) {
-                pstmt.setInt(1, id);
-                pstmt.executeUpdate();
-            }
-
-            try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_MISSOES_CONCLUIDAS)) {
-                pstmt.setInt(1, id);
-                pstmt.executeUpdate();
-            }
-
-            try (PreparedStatement pstmt = con.prepareStatement(SQL_DELETE_USUARIO)) {
-                pstmt.setInt(1, id);
-                return pstmt.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    // Auxiliar: Busca os itens comprados pelo usuário na associativa
-    private ArrayList<ItemLoja> carregarItens(Connection con, int usuarioId) throws SQLException
-    {
-        ArrayList<ItemLoja> itens = new ArrayList<>();
+    private ArrayList<ItemComprado> carregarItens(Connection con, int usuarioId) throws SQLException {
+        ArrayList<ItemComprado> itensComprados = new ArrayList<>();
         try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_ITENS)) {
             pstmt.setInt(1, usuarioId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    ItemLoja item = new ItemLoja();
-                    item.setId(rs.getInt("item_loja_id"));
-                    item.setNome(rs.getString("nome"));
-                    item.setTipo(rs.getString("tipo"));
-                    item.setPrecoAgua(rs.getBigDecimal("preco_agua"));
-                    itens.add(item);
+                    ItemLoja loja = new ItemLoja(
+                            rs.getInt("item_loja_id"),
+                            rs.getString("nome"),
+                            rs.getString("tipo"),
+                            rs.getDouble("preco_agua"),
+                            rs.getInt("loja_id")
+                    );
+
+                    ItemComprado compra = new ItemComprado(
+                            rs.getInt("item_comprado_id"),
+                            rs.getDate("data_compra") != null ? rs.getDate("data_compra").toLocalDate() : null,
+                            rs.getInt("quantidade"),
+                            usuarioId,
+                            loja
+                    );
+
+                    itensComprados.add(compra);
                 }
             }
         }
-        return itens;
+        return itensComprados;
     }
 
-    // Auxiliar: Busca as missões concluídas pelo usuário na associativa
-    private ArrayList<Missao> carregarMissoes(Connection con, int usuarioId) throws SQLException
-    {
-        ArrayList<Missao> missoes = new ArrayList<>();
-        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_MISSOES)) {
+
+    private ArrayList<MissaoConcluida> carregarMissoesConcluidas(Connection con, int usuarioId) throws SQLException {
+        ArrayList<MissaoConcluida> missoesConcluidas = new ArrayList<>();
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_MISSOES_CONCLUIDAS)) {
             pstmt.setInt(1, usuarioId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Missao m = new Missao();
-                    m.setId(rs.getInt("missao_id"));
-                    m.setNome(rs.getString("nome"));
-                    m.setDescricao(rs.getString("descricao"));
-                    m.setDificuldade(rs.getString("dificuldade"));
-                    m.setVezes(rs.getInt("vezes"));
-                    m.setRecompensaPontos(rs.getInt("recompensa_pontos"));
+                    Missao missao = new Missao(
+                            rs.getInt("missao_id"),
+                            rs.getString("nome"),
+                            rs.getString("descricao"),
+                            rs.getString("dificuldade"),
+                            rs.getInt("vezes"),
+                            rs.getInt("recompensa_pontos")
+                    );
 
-                    Date data = rs.getDate("data_conclusao");
-                    if (data != null) {
-                        m.setDataDeConclusao(data.toLocalDate());
-                    }
+                    MissaoConcluida mc = new MissaoConcluida(
+                            rs.getInt("missao_concluida_id"),
+                            usuarioId,
+                            missao,
+                            rs.getDate("data_conclusao") != null ? rs.getDate("data_conclusao").toLocalDate() : null,
+                            missao.getRecompensaPontos()
+                    );
 
-                    missoes.add(m);
+                    missoesConcluidas.add(mc);
                 }
             }
         }
-        return missoes;
+        return missoesConcluidas;
     }
 
-    // Auxiliar: Instancia e popula a entidade Usuario
-    private Usuario mapearUsuario(ResultSet rs) throws SQLException
-    {
+
+    private Usuario mapearUsuario(ResultSet rs) throws SQLException {
         Usuario user = new Usuario();
         user.setId(rs.getInt("usuario_id"));
         user.setNome(rs.getString("nome"));
         user.setCpf(rs.getString("cpf"));
         user.setArcScore(rs.getInt("arc_score"));
         user.setStatus(rs.getString("status"));
+        user.setEmail(rs.getString("email"));
+        user.setSenha(rs.getString("senha"));
         return user;
     }
 }

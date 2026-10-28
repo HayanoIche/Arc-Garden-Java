@@ -1,54 +1,52 @@
 package br.com.fiap.arcgarden.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Jardim
 {
     // Atributos
+    private int id;
     private String nome;
     private String tema;
-    private ArrayList<Planta> plantas = new ArrayList<>();
+    private int usuarioId;
 
-    // ToString
-    @Override
-    public String toString()
-    {
-        return "\nnome: " + nome +
-                "\ntema: " + tema;
-    }
+    private List<Planta> plantas = new ArrayList<>();
 
     // Construtores
-    // Construtor Vazio
     public Jardim() {}
 
-    // Construtor Cheio
-    public Jardim(String nome, String tema) {
+    public Jardim(int id, String nome, String tema, int usuarioId) {
+        this.id = id;
         this.nome = nome;
         this.tema = tema;
+        this.usuarioId = usuarioId;
     }
 
-    // Métodos Acessores
+    public Jardim(int id, String nome, String tema, int usuarioId, List<Planta> plantas) {
+        this.id = id;
+        this.nome = nome;
+        this.tema = tema;
+        this.usuarioId = usuarioId;
+        this.plantas = plantas;
+    }
+
+    // Acessores
+    public int getId() { return id; }
     public String getNome() { return nome; }
     public String getTema() { return tema; }
+    public int getUsuarioId() { return usuarioId; }
+    public List<Planta> getPlantas() { return plantas; }
 
+    public void setId(int id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
     public void setTema(String tema) { this.tema = tema; }
+    public void setUsuarioId(int usuarioId) { this.usuarioId = usuarioId; }
+    public void setPlantas(List<Planta> plantas) { this.plantas = plantas; }
 
-    // Métodos Workers
-    public void cadastrarPlanta(Planta planta)
+    public void adicionarPlanta(Planta planta)
     {
-        plantas.add(planta);
-    }
-
-    public void mostrarPlantas()
-    {
-        System.out.println("----------------------");
-        System.out.println("     SUAS PLANTAS     ");
-        System.out.println("----------------------\n");
-
-        for(int i = 0; i < plantas.size(); i += 1)
-        {
-            System.out.println(plantas.get(i));
-        }
+        if (this.plantas == null) { this.plantas = new ArrayList<>(); }
+        this.plantas.add(planta);
     }
 }
