@@ -21,7 +21,7 @@ public class UsuarioResource
     public UsuarioResource(UsuarioService service) { this.service = service; }
 
     @PostMapping
-    public ResponseEntity<Object> criar(@RequestBody UsuarioRequestDto requestDto)
+    public ResponseEntity<?> criar(@RequestBody UsuarioRequestDto requestDto)
     {
         try {
             Usuario usuario = UsuarioMapper.toModel(requestDto);
@@ -44,7 +44,7 @@ public class UsuarioResource
     }
 
     @PostMapping("/{usuarioId}/missoes/{missaoId}")
-    public ResponseEntity<Object> concluirMissao(@PathVariable int usuarioId, @PathVariable int missaoId)
+    public ResponseEntity<?> concluirMissao(@PathVariable int usuarioId, @PathVariable int missaoId)
     {
         try {
             service.concluirMissao(usuarioId, missaoId);
@@ -64,7 +64,7 @@ public class UsuarioResource
     }
 
     @PostMapping("/{usuarioId}/itens/{itemId}")
-    public ResponseEntity<Object> comprarItem(@PathVariable int usuarioId, @PathVariable int itemId, @RequestParam(defaultValue = "1") int quantidade)
+    public ResponseEntity<?> comprarItem(@PathVariable int usuarioId, @PathVariable int itemId, @RequestParam(defaultValue = "1") int quantidade)
     {
         try {
             service.comprarItem(usuarioId, itemId, quantidade);
@@ -84,7 +84,7 @@ public class UsuarioResource
     }
 
     @GetMapping
-    public ResponseEntity<Object> listar()
+    public ResponseEntity<?> listar()
     {
         try {
             List<UsuarioResponseDto> dtos = service.listar().stream()
@@ -106,7 +106,7 @@ public class UsuarioResource
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> buscarPorId(@PathVariable int id)
+    public ResponseEntity<?> buscarPorId(@PathVariable int id)
     {
         try {
             Usuario usuario = service.buscarPorId(id);
@@ -129,7 +129,7 @@ public class UsuarioResource
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable int id, @RequestBody UsuarioRequestDto requestDto) {
+    public ResponseEntity<?> atualizar(@PathVariable int id, @RequestBody UsuarioRequestDto requestDto) {
         try {
             Usuario usuario = UsuarioMapper.toModel(requestDto);
             service.atualizar(id, usuario);

@@ -22,7 +22,7 @@ public class JardimResource
     public JardimResource(JardimService service) { this.service = service; }
 
     @GetMapping
-    public ResponseEntity<List<JardimResponseDto>> listar(
+    public ResponseEntity<?> listar(
             @RequestParam(required = false) String tema,
             @RequestParam(required = false) Integer usuarioId) {
 
@@ -43,27 +43,27 @@ public class JardimResource
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JardimResponseDto> buscarPorId(@PathVariable int id) {
+    public ResponseEntity<?> buscarPorId(@PathVariable int id) {
         Jardim jardim = service.buscarPorId(id);
         return ResponseEntity.ok(JardimMapper.toResponseDto(jardim));
     }
 
     @PostMapping
-    public ResponseEntity<JardimResponseDto> criar(@RequestBody JardimRequestDto dto) {
+    public ResponseEntity<?> criar(@RequestBody JardimRequestDto dto) {
         Jardim jardim = JardimMapper.toModel(dto);
         Jardim salvo = service.criar(jardim);
         return ResponseEntity.status(HttpStatus.CREATED).body(JardimMapper.toResponseDto(salvo));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(@PathVariable int id, @RequestBody JardimRequestDto dto) {
+    public ResponseEntity<?> atualizar(@PathVariable int id, @RequestBody JardimRequestDto dto) {
         Jardim jardim = JardimMapper.toModel(id, dto);
         service.atualizar(id, jardim);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/plantas")
-    public ResponseEntity<Void> adicionarPlanta(@PathVariable int id, @RequestBody PlantaRequestDto dto) {
+    public ResponseEntity<?> adicionarPlanta(@PathVariable int id, @RequestBody PlantaRequestDto dto) {
         TipoPlanta tipo = new TipoPlanta();
         tipo.setId(dto.tipoId());
 
@@ -80,7 +80,7 @@ public class JardimResource
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable int id) {
+    public ResponseEntity<?> deletar(@PathVariable int id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }

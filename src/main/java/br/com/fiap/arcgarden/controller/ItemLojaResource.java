@@ -19,7 +19,7 @@ public class ItemLojaResource
     public ItemLojaResource(ItemLojaService service) { this.service = service; }
 
     @GetMapping
-    public ResponseEntity<List<ItemLojaResponseDto>> listar(@RequestParam(required = false) String tipo) {
+    public ResponseEntity<?> listar(@RequestParam(required = false) String tipo) {
         List<ItemLoja> itens = (tipo != null && !tipo.trim().isEmpty())
                 ? service.buscarPorTipo(tipo)
                 : service.listarTodos();
@@ -31,27 +31,27 @@ public class ItemLojaResource
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemLojaResponseDto> buscarPorId(@PathVariable int id) {
+    public ResponseEntity<?> buscarPorId(@PathVariable int id) {
         ItemLoja item = service.buscarPorId(id);
         return ResponseEntity.ok(ItemLojaMapper.toResponseDto(item));
     }
 
     @PostMapping
-    public ResponseEntity<ItemLojaResponseDto> criar(@RequestBody ItemLojaRequestDto dto) {
+    public ResponseEntity<?> criar(@RequestBody ItemLojaRequestDto dto) {
         ItemLoja item = ItemLojaMapper.toModel(dto);
         ItemLoja salvo = service.criar(item);
         return ResponseEntity.status(HttpStatus.CREATED).body(ItemLojaMapper.toResponseDto(salvo));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(@PathVariable int id, @RequestBody ItemLojaRequestDto dto) {
+    public ResponseEntity<?> atualizar(@PathVariable int id, @RequestBody ItemLojaRequestDto dto) {
         ItemLoja item = ItemLojaMapper.toModel(id, dto);
         service.atualizar(id, item);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable int id) {
+    public ResponseEntity<?> deletar(@PathVariable int id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }

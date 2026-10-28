@@ -17,7 +17,7 @@ public class MissaoResource {
     public MissaoResource(MissaoService service) { this.service = service; }
 
     @GetMapping
-    public ResponseEntity<List<MissaoResponseDto>> listar() {
+    public ResponseEntity<?> listar() {
         List<MissaoResponseDto> response = service.listarTodos().stream()
                 .map(MissaoMapper::toResponseDto)
                 .toList();
@@ -25,24 +25,24 @@ public class MissaoResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MissaoResponseDto> buscarPorId(@PathVariable int id) {
+    public ResponseEntity<?> buscarPorId(@PathVariable int id) {
         return ResponseEntity.ok(MissaoMapper.toResponseDto(service.buscarPorId(id)));
     }
 
     @PostMapping
-    public ResponseEntity<MissaoResponseDto> criar(@RequestBody MissaoRequestDto dto) {
+    public ResponseEntity<?> criar(@RequestBody MissaoRequestDto dto) {
         Missao salvo = service.criar(MissaoMapper.toModel(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(MissaoMapper.toResponseDto(salvo));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(@PathVariable int id, @RequestBody MissaoRequestDto dto) {
+    public ResponseEntity<?> atualizar(@PathVariable int id, @RequestBody MissaoRequestDto dto) {
         service.atualizar(id, MissaoMapper.toModel(id, dto));
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable int id) {
+    public ResponseEntity<?> deletar(@PathVariable int id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
