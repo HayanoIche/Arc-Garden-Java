@@ -12,11 +12,33 @@ import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tipos-plantas")
+@RequestMapping("api/v1/tipos-plantas")
 public class TipoPlantaResource
 {
     private final TipoPlantaService service;
     public TipoPlantaResource(TipoPlantaService service)  { this.service = service; }
+
+    @PostMapping
+    public ResponseEntity<?> criar(@RequestBody TipoPlantaRequestDto dto)
+    {
+        try {
+            TipoPlanta salvo = service.criar(TipoPlantaMapper.toModel(dto));
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(TipoPlantaMapper.toResponseDto(salvo));
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/tipos-plantas"
+            );
+
+            return ResponseEntity.status(status).body(error);
+        }
+    }
+
 
     @GetMapping
     public ResponseEntity<?> listar(@RequestParam(required = false) String categoria)
@@ -27,43 +49,79 @@ public class TipoPlantaResource
 
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            HttpStatus status = HttpStatus.BAD_REQUEST;
+            HttpStatus status = HttpStatus.NOT_FOUND;
 
             ErrorResponse error = new ErrorResponse(
                     Instant.now(),
                     status.value(),
                     e.getMessage(),
-                    "api/v1/usuarios"
+                    "api/v1/tipos-plantas"
             );
 
             return ResponseEntity.status(status).body(error);
         }
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable int id)
     {
-        return ResponseEntity.ok(TipoPlantaMapper.toResponseDto(service.buscarPorId(id)));
+        try {
+            return ResponseEntity.ok(TipoPlantaMapper.toResponseDto(service.buscarPorId(id)));
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.NOT_FOUND;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/tipos-plantas/{id}"
+            );
+
+            return ResponseEntity.status(status).body(error);
+        }
     }
 
-    @PostMapping
-    public ResponseEntity<?> criar(@RequestBody TipoPlantaRequestDto dto)
-    {
-        TipoPlanta salvo = service.criar(TipoPlantaMapper.toModel(dto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(TipoPlantaMapper.toResponseDto(salvo));
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable int id, @RequestBody TipoPlantaRequestDto dto)
     {
-        service.atualizar(id, TipoPlantaMapper.toModel(id, dto));
-        return ResponseEntity.noContent().build();
+        try {
+            service.atualizar(id, TipoPlantaMapper.toModel(id, dto));
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/tipos-plantas/{id}"
+            );
+
+            return ResponseEntity.status(status).body(error);
+        }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable int id)
     {
-        service.deletar(id);
-        return ResponseEntity.noContent().build();
+        try {
+            service.deletar(id);
+
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            ErrorResponse error = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    e.getMessage(),
+                    "api/v1/tipos-plantas/{id}"
+            );
+
+            return ResponseEntity.status(status).body(error);
+        }
     }
 }

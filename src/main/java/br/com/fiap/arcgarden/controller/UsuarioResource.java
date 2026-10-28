@@ -20,6 +20,7 @@ public class UsuarioResource
     private final UsuarioService service;
     public UsuarioResource(UsuarioService service) { this.service = service; }
 
+
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody UsuarioRequestDto requestDto)
     {
@@ -43,6 +44,7 @@ public class UsuarioResource
         }
     }
 
+
     @PostMapping("/{usuarioId}/missoes/{missaoId}")
     public ResponseEntity<?> concluirMissao(@PathVariable int usuarioId, @PathVariable int missaoId)
     {
@@ -62,6 +64,7 @@ public class UsuarioResource
             return ResponseEntity.status(status).body(error);
         }
     }
+
 
     @PostMapping("/{usuarioId}/itens/{itemId}")
     public ResponseEntity<?> comprarItem(@PathVariable int usuarioId, @PathVariable int itemId, @RequestParam(defaultValue = "1") int quantidade)
@@ -83,6 +86,7 @@ public class UsuarioResource
         }
     }
 
+
     @GetMapping
     public ResponseEntity<?> listar()
     {
@@ -92,7 +96,7 @@ public class UsuarioResource
                     .toList();
             return ResponseEntity.ok(dtos);
         } catch (RuntimeException e) {
-            HttpStatus status = HttpStatus.BAD_REQUEST;
+            HttpStatus status = HttpStatus.NOT_FOUND;
 
             ErrorResponse error = new ErrorResponse(
                     Instant.now(),
@@ -105,6 +109,7 @@ public class UsuarioResource
         }
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable int id)
     {
@@ -115,7 +120,7 @@ public class UsuarioResource
             }
             return ResponseEntity.ok(UsuarioMapper.toResponseDto(usuario));
         } catch (RuntimeException e) {
-            HttpStatus status = HttpStatus.BAD_REQUEST;
+            HttpStatus status = HttpStatus.NOT_FOUND;
 
             ErrorResponse error = new ErrorResponse(
                     Instant.now(),
@@ -128,12 +133,13 @@ public class UsuarioResource
         }
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable int id, @RequestBody UsuarioRequestDto requestDto) {
         try {
             Usuario usuario = UsuarioMapper.toModel(requestDto);
             service.atualizar(id, usuario);
-            return ResponseEntity.noContent().build(); // 204
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             HttpStatus status = HttpStatus.BAD_REQUEST;
 
