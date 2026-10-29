@@ -91,9 +91,7 @@ public class UsuarioResource
     public ResponseEntity<?> listar()
     {
         try {
-            List<UsuarioResponseDto> dtos = service.listar().stream()
-                    .map(UsuarioMapper::toResponseDto)
-                    .toList();
+            List<UsuarioResponseDto> dtos = service.listar().stream().map(UsuarioMapper::toResponseDto).toList();
             return ResponseEntity.ok(dtos);
         } catch (RuntimeException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;

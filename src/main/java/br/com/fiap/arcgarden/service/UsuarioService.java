@@ -1,5 +1,6 @@
 package br.com.fiap.arcgarden.service;
 
+import br.com.fiap.arcgarden.controller.dto.UsuarioResponseDto;
 import br.com.fiap.arcgarden.model.Usuario;
 import br.com.fiap.arcgarden.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,18 @@ public class UsuarioService
     {
         return repository.readAll();
     }
+
+    public List<Usuario> listarRanking()
+    {
+        return repository.readRanking();
+    }
+
+    public Usuario buscarPorPosicaoRanking(int posicao)
+    {
+        List<Usuario> users = listarRanking();
+        return users.get(posicao-1);
+    }
+
 
     public Usuario buscarPorId(int id)
     {

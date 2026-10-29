@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 
 public class UsuarioMapper
 {
-    public static Usuario toModel(UsuarioRequestDto dto) {
+    public static Usuario toModel(UsuarioRequestDto dto)
+    {
         Usuario usuario = new Usuario();
         usuario.setNome(dto.nome());
         usuario.setCpf(dto.cpf());
@@ -19,7 +20,8 @@ public class UsuarioMapper
         return usuario;
     }
 
-    public static UsuarioResponseDto toResponseDto(Usuario usuario) {
+    public static UsuarioResponseDto toResponseDto(Usuario usuario)
+    {
         if (usuario == null) return null;
 
         List<ItemCompradoResponseDto> itensDto = usuario.getItensComprados() != null ?
@@ -50,6 +52,19 @@ public class UsuarioMapper
                 usuario.getEmail(),
                 itensDto,
                 missoesDto
+        );
+    }
+
+    public static UsuarioRankingResponseDto toRankingResponseDto(Usuario usuario, int posicao)
+    {
+        if (usuario == null) return null;
+
+        return new UsuarioRankingResponseDto(
+                usuario.getId(),
+                posicao,
+                usuario.getNome(),
+                usuario.getArcScore(),
+                usuario.getEmail()
         );
     }
 }

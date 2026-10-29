@@ -30,6 +30,7 @@ public class UsuarioRepository
     private static final String SQL_SELECT_ID = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios WHERE usuario_id = ?";
     private static final String SQL_SELECT_NOME = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios WHERE lower(nome) LIKE ? ORDER BY nome";
     private static final String SQL_SELECT_CPF = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios WHERE lower(cpf) LIKE ? ORDER BY cpf";
+    private static final String SQL_SELECT_RANKING = "SELECT usuario_id, nome, cpf, arc_score, status, email, senha FROM tb_usuarios ORDER BY arc_score DESC";
 
     private static final String SQL_SELECT_ITENS =
             "SELECT c.item_comprado_id, c.data_compra, c.quantidade, " +
@@ -134,6 +135,30 @@ public class UsuarioRepository
         } finally {
             DataSourceUtils.releaseConnection(con, dataSource);
         }
+        return lista;
+    }
+
+
+    public List<Usuario> readRanking()
+    {
+        List<Usuario> lista = new ArrayList<>();
+        Connection con = DataSourceUtils.getConnection(dataSource);
+
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SELECT_RANKING);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Usuario user = mapearUsuario(rs);
+                user.setItensComprados(carregarItens(con, user.getId()));
+                user.setMissoesConcluidas(carregarMissoesConcluidas(con, user.getId()));
+                lista.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar usuários", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+
         return lista;
     }
 
