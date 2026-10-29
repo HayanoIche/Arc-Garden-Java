@@ -1,6 +1,5 @@
 package br.com.fiap.arcgarden.service;
 
-import br.com.fiap.arcgarden.controller.dto.UsuarioResponseDto;
 import br.com.fiap.arcgarden.model.Usuario;
 import br.com.fiap.arcgarden.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;

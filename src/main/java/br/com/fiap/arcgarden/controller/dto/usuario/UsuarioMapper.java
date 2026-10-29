@@ -1,5 +1,7 @@
-package br.com.fiap.arcgarden.controller.dto;
+package br.com.fiap.arcgarden.controller.dto.usuario;
 
+import br.com.fiap.arcgarden.controller.dto.item.ItemCompradoResponseDto;
+import br.com.fiap.arcgarden.controller.dto.missao.MissaoConcluidaResponseDto;
 import br.com.fiap.arcgarden.model.Usuario;
 
 import java.util.Collections;

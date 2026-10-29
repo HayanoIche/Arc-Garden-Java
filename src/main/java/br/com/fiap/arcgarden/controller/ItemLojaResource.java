@@ -1,8 +1,8 @@
 package br.com.fiap.arcgarden.controller;
 
-import br.com.fiap.arcgarden.controller.dto.ItemLojaRequestDto;
-import br.com.fiap.arcgarden.controller.dto.ItemLojaResponseDto;
-import br.com.fiap.arcgarden.controller.dto.ItemLojaMapper;
+import br.com.fiap.arcgarden.controller.dto.item.ItemLojaRequestDto;
+import br.com.fiap.arcgarden.controller.dto.item.ItemLojaResponseDto;
+import br.com.fiap.arcgarden.controller.dto.item.ItemLojaMapper;
 import br.com.fiap.arcgarden.exceptions.ErrorResponse;
 import br.com.fiap.arcgarden.model.ItemLoja;
 import br.com.fiap.arcgarden.service.ItemLojaService;

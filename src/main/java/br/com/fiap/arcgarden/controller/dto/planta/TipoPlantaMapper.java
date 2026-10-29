@@ -1,4 +1,4 @@
-package br.com.fiap.arcgarden.controller.dto;
+package br.com.fiap.arcgarden.controller.dto.planta;
 
 import br.com.fiap.arcgarden.model.TipoPlanta;
 

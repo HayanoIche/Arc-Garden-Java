@@ -1,5 +1,7 @@
-package br.com.fiap.arcgarden.controller.dto;
+package br.com.fiap.arcgarden.controller.dto.jardim;
 
+import br.com.fiap.arcgarden.controller.dto.planta.PlantaResponseDto;
+import br.com.fiap.arcgarden.controller.dto.planta.TipoPlantaResponseDto;
 import br.com.fiap.arcgarden.model.Jardim;
 import br.com.fiap.arcgarden.model.Planta;
 import br.com.fiap.arcgarden.model.TipoPlanta;

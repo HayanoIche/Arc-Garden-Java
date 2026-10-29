@@ -1,4 +1,4 @@
-package br.com.fiap.arcgarden.controller.dto;
+package br.com.fiap.arcgarden.controller.dto.usuario;
 
 public record UsuarioRequestDto(
         String nome,

@@ -1,9 +1,9 @@
 package br.com.fiap.arcgarden.controller;
 
-import br.com.fiap.arcgarden.controller.dto.JardimRequestDto;
-import br.com.fiap.arcgarden.controller.dto.JardimResponseDto;
-import br.com.fiap.arcgarden.controller.dto.JardimMapper;
-import br.com.fiap.arcgarden.controller.dto.PlantaRequestDto;
+import br.com.fiap.arcgarden.controller.dto.jardim.JardimRequestDto;
+import br.com.fiap.arcgarden.controller.dto.jardim.JardimResponseDto;
+import br.com.fiap.arcgarden.controller.dto.jardim.JardimMapper;
+import br.com.fiap.arcgarden.controller.dto.planta.PlantaRequestDto;
 import br.com.fiap.arcgarden.exceptions.ErrorResponse;
 import br.com.fiap.arcgarden.model.Jardim;
 import br.com.fiap.arcgarden.model.Planta;

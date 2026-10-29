@@ -1,6 +1,4 @@
-package br.com.fiap.arcgarden.controller.dto;
-
-import java.util.List;
+package br.com.fiap.arcgarden.controller.dto.usuario;
 
 public record UsuarioRankingResponseDto(
         int id,

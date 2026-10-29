@@ -1,8 +1,8 @@
 package br.com.fiap.arcgarden.controller;
 
-import br.com.fiap.arcgarden.controller.dto.UsuarioMapper;
-import br.com.fiap.arcgarden.controller.dto.UsuarioRequestDto;
-import br.com.fiap.arcgarden.controller.dto.UsuarioResponseDto;
+import br.com.fiap.arcgarden.controller.dto.usuario.UsuarioMapper;
+import br.com.fiap.arcgarden.controller.dto.usuario.UsuarioRequestDto;
+import br.com.fiap.arcgarden.controller.dto.usuario.UsuarioResponseDto;
 import br.com.fiap.arcgarden.exceptions.ErrorResponse;
 import br.com.fiap.arcgarden.model.Usuario;
 import br.com.fiap.arcgarden.service.UsuarioService;
