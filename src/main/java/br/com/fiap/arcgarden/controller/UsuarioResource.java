@@ -113,9 +113,8 @@ public class UsuarioResource
     {
         try {
             Usuario usuario = service.buscarPorId(id);
-            if (usuario == null) {
-                return ResponseEntity.notFound().build();
-            }
+
+            if (usuario == null) { throw new RuntimeException("Usuário não encontrado"); }
             return ResponseEntity.ok(UsuarioMapper.toResponseDto(usuario));
         } catch (RuntimeException e) {
             HttpStatus status = HttpStatus.NOT_FOUND;

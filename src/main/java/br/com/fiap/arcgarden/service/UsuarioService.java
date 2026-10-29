@@ -32,7 +32,13 @@ public class UsuarioService
     public Usuario buscarPorPosicaoRanking(int posicao)
     {
         List<Usuario> users = listarRanking();
-        return users.get(posicao-1);
+
+        if (posicao > users.size() || posicao <= 0)
+        {
+            throw new RuntimeException("A posição informada é inválida.");
+        }
+
+        return users.get(posicao - 1);
     }
 
 
@@ -56,7 +62,7 @@ public class UsuarioService
     {
         if (quantidade <= 0)
         {
-            throw new IllegalArgumentException("A quantidade deve ser maior que zero.");
+            throw new RuntimeException("A quantidade deve ser maior que zero.");
         }
 
         repository.inserirItemComprado(usuarioId, itemId, quantidade);
