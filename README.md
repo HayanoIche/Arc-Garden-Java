@@ -1,11 +1,18 @@
 
 # ARC-GARDEN JAVA
+
 ## GERAL
 Repositório do backend (API REST) do projeto ArcGarden desenvolvido pela equipe Arceus para challenge fiap 2026.
+
+## LINK DO RENDER
+todo: colocar o link do render aqui!
+
 ## DOCUMENTAÇÃO
 Todas as informações da documentação estão dentro do arquivo documentação.pdf na raiz do projeto.
+
 ## API
 explicação rápida dos endpoints da API
+
 ### USUARIO
 
 /api/v1/usuarios
@@ -65,6 +72,3 @@ api/v1/itens-loja
 
 api/v1/itens-loja/{id}
 -- pega, atualiza ou deleta um item em específico
-
-## LINK DO RENDER
-todo: colocar o link do render aqui!
